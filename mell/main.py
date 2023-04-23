@@ -243,92 +243,111 @@ def parse_args():
     return args
 
 
+def load_metadata(args, meta_filenames):
+
+    meta = {}
+
+    for filename in meta_filenames.split(','):
+        filepath = os.path.join(args.meta, filename) + ".json"
+        
+        with open(filepath, "r") as fin:
+            meta_parent = json.loads(fin.read())
+            
+            if "__parent__" in meta_parent:
+                meta_parent_2 = load_metadata(args, meta_parent["__parent__"])
+                meta_parent = update_dict_recursively(meta_parent_2, meta_parent)
+            
+            meta = update_dict_recursively(meta, meta_parent)
+    
+    return meta
+
+def update_dict_recursively(dst, src):
+
+    if isinstance(dst, dict):
+        for key, value in src.items():
+            if key in dst:
+                dst[key] = update_dict_recursively(dst[key], value)
+            else:
+                dst[key] = value
+
+    elif isinstance(dst, list) and isinstance(src, list) and len(src) == len(dst):
+        for i in range(len(dst)):
+            src_item, dst_item = src[i], dst[i]
+            dst[i] = update_dict_recursively(dst_item, src_item)
+
+    else:
+        dst = src
+    
+    return dst
+
+
+class MetaIterator:
+
+    def __init__(self, iterator):
+        self.iterator = iterator
+    
+    def __next__(self):
+        return Meta(self.iterator.__next__())
+
+
 class Meta:
 
-    def __init__(self, args):
-        
-        if os.path.exists(args.meta):
-            self.meta = self._load(args, args.metadata)
+    def __init__(self, value):
 
-        else:
-            warn(f"Folder meta does not exists - {args.meta}")
-            self.meta = {}
-        
-    def _load(self, args, meta_filenames):
-
-        meta = {}
-
-        for filename in meta_filenames.split(','):
-            filepath = os.path.join(args.meta, filename) + ".json"
-            
-            with open(filepath, "r") as fin:
-                meta_parent = json.loads(fin.read())
-                
-                if "__parent__" in meta_parent:
-                    meta_parent_2 = self._load(args, meta_parent["__parent__"])
-                    meta_parent = self._update_dict_recursively(meta_parent_2, meta_parent)
-                
-                meta = self._update_dict_recursively(meta, meta_parent)
-        
-        return meta
+        self.__dict__['v'] = value
     
-    def _update_dict_recursively(self, dst, src):
-
-        if isinstance(dst, dict):
-            for key, value in src.items():
-                if key in dst:
-                    dst[key] = self._update_dict_recursively(dst[key], value)
-                else:
-                    dst[key] = value
-
-        elif isinstance(dst, list) and isinstance(src, list) and len(src) == len(dst):
-            for i in range(len(dst)):
-                src_item, dst_item = src[i], dst[i]
-                dst[i] = self._update_dict_recursively(dst_item, src_item)
-
-        else:
-            dst = src
+    def __iter__(self):
         
-        return dst
+        v = self.v
+        if v is None:
+            raise IndexError("Trying to iterate over a metadata that does not exist.")
+        return MetaIterator(v.__iter__())
+      
+    def __bool__(self):
 
-    def __contains__(self, index):
+        return True if self.v else False
 
-        try:
-            current = self.meta
+    def __getattr__(self, index):
 
-            for idx in index.split("."):
-                if isinstance(current, list):
-                    current = current[int(idx)]
-                else:
-                    current = current[idx]
-            
-            return True
-            
-        except KeyError:
-            return False
+        v = self.v
+        if v is None:
+            return Meta(None)
+        elif index in v:
+            return Meta(v[index])
+        else:
+            return Meta(None)
     
     def __getitem__(self, index):
-
-        try:
-            current = self.meta
-
-            for idx in index.split("."):
-                if isinstance(current, list):
-                    current = current[int(idx)]
-                else:
-                    current = current[idx]
-
-            return current
-            
-        except KeyError:
-            raise KeyError(index)
+        
+        v = self.v
+        if v is None:
+            return Meta(None)
+        else:
+            return Meta(v[index])
     
-    def len(self, index):
-
-        return len(self[index])
+    def __setattr__(self, index, value):
+        
+        v = self.v
+        if v is None:
+            raise IndexError("Trying to set an attribute to a metadata that does not exist.")
+        v[index] = value
+    
+    def __len__(self):
+        
+        v = self.v
+        if v is None:
+            raise IndexError("Trying to get the length of a metadata that does not exist.")
+        return len(v)
 
     def __repr__(self):
-        return json.dumps(self.meta, indent=2)
+        
+        v = self.v
+        return repr(v)
+
+    def __str__(self) -> str:
+
+        v = self.v
+        return str(v)
 
 
 class Inflater:
@@ -455,10 +474,15 @@ def main(*params):
     args = parse_args()
 
     info("Loading the metadata")
-    meta = Meta(args)
+    if os.path.exists(args.meta):
+        meta = Meta(load_metadata(args, args.metadata))
 
-    debug(meta)
-    debug(json.dumps(args.__dict__, indent=2))
+    else:
+        warn(f"Folder meta does not exists - {args.meta}")
+        meta = Meta({})
+    
+    debug("Metadata:", json.dumps(meta.v, indent=2))
+    debug("Parameters:", json.dumps(args.__dict__, indent=2))
 
     info("Loading the inflater")
     inflater = Inflater(args)

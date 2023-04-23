@@ -114,7 +114,7 @@ This is the content for `<root>/meta/pt.json`.
 This is the content for `<root>/style/template/main.py`:
 
 ```python
-print("|= meta["message"] =|")
+print("|= meta.message =|")
 ```
 
 This is the content for `<root>/style2/template/main.cpp`.
@@ -124,7 +124,7 @@ This is the content for `<root>/style2/template/main.cpp`.
 
 int main()
 {
-    std::cout << "|= meta["message"] =|" << std::endl;
+    std::cout << "|= meta.message =|" << std::endl;
     return 0;
 }
 ```
@@ -264,27 +264,27 @@ Currently, the only one reserved word we use is `__parent__`. It allows us to ge
 We will talk a little bit more about the template syntax in the next section, but given the following template file is saved in `<root>/style/template/letter.txt`.
 
 ```c
-To: |= meta["to"] =| <|= meta["address"] =|>
-Subject: |= meta["subject"] =|
+To: |= meta.to. =| <|= meta.address =|>
+Subject: |= meta.subject. =|
 
-|? if meta["opening"] ?|
-|= meta["opening"] =|
-
-|? endif ?|
-|? if meta["first_paragraph"] ?|
-|= meta["first_paragraph"] =|
+|? if meta.opening. ?|
+|= meta.opening. =|
 
 |? endif ?|
-|? for paragraph in meta["paragraphs"] ?|
+|? if meta.first_paragraph. ?|
+|= meta.first_paragraph. =|
+
+|? endif ?|
+|? for paragraph in meta.paragraphs. ?|
 |= paragraph =|
 
 |? endfor ?|
-|? if meta["last_paragraph"] ?|
-|= meta["last_paragraph"] =|
+|? if meta.last_paragraph. ?|
+|= meta.last_paragraph. =|
 
 |? endif ?|
-|= meta["ending"] =|
-|= meta["signature"] =|
+|= meta.ending. =|
+|= meta.signature. =|
 
 ```
 
@@ -370,11 +370,11 @@ cd plugin_test
 Create a file in `plugin_test/style/asset/letter.txt` with the following content.
 
 ```
-Dear |= meta["name"] =|,
+Dear |= meta.name. =|,
 
-As you have added the item |= meta["product"] =| on your wishlist, I am here to tell you that this item is now available with a discount of |= meta["discount"] =|. 
+Your wishlist item '|= meta.product. =|' is now on sale with |= meta.discount. =| off. 
 
-If this is still of your interest, you can check it [here](|= meta["product_url"] =|). If you want to see or manage your entire wishlist you may click [here](http://shopping.com/wishlist).
+If this is still of your interest, you can check it [here](|= meta.product_url. =|). If you want to see or manage your wishlist items, [click here](http://shopping.com/wishlist).
 
 Best Regards,
 Bot
@@ -384,7 +384,7 @@ Create a file in `plugin_test/style/plugin/example_plugin.py` with the following
 
 ```python
 def main(inflater, meta):
-    for i, item in enumerate(meta["clients"]):
+    for i, item in enumerate(meta.clients.):
         inflater.inflateAsset("letter.txt", item, to_file=f"examples/letter_{i}.txt")
 ```
 
@@ -433,6 +433,10 @@ Best Regards,
 Bot
 ```
 
+# Using the logic folder to extend the metadata
+
+
+
 ## Special Command Options
 
 These are a few examples of common operations.
@@ -465,7 +469,7 @@ mell --style style2 en
 # Specify a different generate folder. This is useful if you have multiple styles and want to generate different things on different folders.
 mell --generate generate2 en
 
-# An example with a custom style and generate folders and two metadata. We are assuming there are style folders named python and cpp on your local directory.
+# An example with custom style names, distinct output folders and two metadata files. We are assuming the style folders are on local directory and named python and cpp.
 mell --style python --generate genPythonEn en
 mell --style python --generate genPythonPt pt
 mell --style cpp --generate genCppEn en
