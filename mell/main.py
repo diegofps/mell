@@ -31,100 +31,36 @@ def error(*args):
     sys.exit(1)
 
 
+def new_structure(value):
+    if os.path.exists(value):
+        error(f"Can't create a root structure, a folder with this name already exists: {value}")
+        
+    for foldernames in [("style", "asset"), ("style", "template"), ("style", "plugin"), ("style", "static"), ("meta",), ("generate",)]:
+        path = os.path.join(value, *foldernames)
+        info(f"  Creating folder {path}")
+        os.makedirs(path)
+    
+    sys.exit(0)
+
+def new_style_structure(value):
+    if os.path.exists(value):
+        error(f"Can't create a style structure, a folder with this name already exists: {value}")
+        
+    for foldernames in ["asset", "template", "plugin", "static"]:
+        path = os.path.join(value, foldernames)
+        info(f"  Creating folder {path}")
+        os.makedirs(path)
+    
+    sys.exit(0)
+
+
 def parse_args():
 
-    epilogue = """
-    Recommended folder structure:
-
-        <root>:
-        |- generate: folder that will hold the generated data, do not edit this folder.
-        |
-        |- meta:     folder holding json files, each with a variation of the metadata.
-        |
-        |- template: folder holding the template files that will be rendered with the 
-        |            current metadata and saved to the generate folder, using the same path.
-        |
-        |- static:   folder holding the static files that will be copied as they are to the 
-        |            generate folder, using the same path.
-        |
-        |- plugin:   folder holding scripts with a main function receiving the parameters 
-        |            inflater and meta.Create scripts to generate multiple files from 
-        |            templates in the asset folder.
-        |
-        |- asset:    folder holding template and other files that are not directly copied to 
-                    generate. They may be used by plugins or other tools.
-
-
-    basic example:
-
-        # Content of ./template/main.py
-        print(|= meta["message"] =|)
-
-        # Content of ./meta/pt.json
-        { "message": "Olá Mundo" }
-
-        # Content of ./meta/en.json
-        { "message": "Hello World" }
-
-        # Execute it with the following command:
-        mel pt
-
-        # It will generate the following file in ./generate/main.py
-        print("Olá Mundo")
-                    
-        # Execute it with the following command:
-        mel en
-
-        # It will generate the following file in ./generate/main.py
-        print("Hello World")
-
-
-    plugin example:
-
-        # Content of ./asset/example.txt
-        Key: |= meta["key"] =|
-        Value: |= meta["value"]=|
-
-        # Content of ./plugin/example_plugin.py
-        def main(inflater, meta):
-            for i, item in enumerate(meta["examples"]):
-                inflater.inflateAsset("example.txt", item, to_file=f"examples/ex{i}.txt")
-
-        # Content of ./meta/en.txt
-        {
-            "examples": [
-                {
-                    "key": "nome",
-                    "value": "Diego"
-                },
-                {
-                    "key": "idade",
-                    "value": "33"
-                },
-                {
-                    "key": "sexo",
-                    "value": "Masculino"
-                },
-                {
-                    "key": "estado civil",
-                    "value": "Solteiro"
-                }
-            ]
-        }
-
-        # Run it with the following command:
-        mel en
-
-        # Four files will be generated in ./generate/examples. The first file is ex0.txt, 
-        # with the following content:
-        Key: nome
-        Value: Diego
-    """
 
     parser = argparse.ArgumentParser(
                         prog='mel',
                         description='Metaprogramming layer designed to generates anything from template files.',
-                        epilog=epilogue,
+                        epilog="Check my README.md to learn more tips on how to use this application: https://github.com/diegofps/mell/blob/main/README.md",
                         formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument('metadata',
@@ -132,53 +68,60 @@ def parse_args():
                         metavar='METADATA',
                         help="name of file(s) located inside the meta folder. If multiple are provided, separated by comma, a merge will be performed.")
 
-    parser.add_argument('-t', '--template',
+    parser.add_argument('--template',
                         type=str,
                         default=None,
                         dest='template',
-                        help="Folder to read the template files, the default value is <root>/template",
+                        help="Folder to read the template files, the default value is <style>/template",
                         action='store')
 
-    parser.add_argument('-s', '--static',
+    parser.add_argument('--static',
                         type=str,
                         default=None,
                         dest='static',
-                        help="Folder to read the static files, the default value is <root>/static",
+                        help="Folder to read the static files, the default value is <style>/static",
                         action='store')
 
-    parser.add_argument('-m', '--meta',
+    parser.add_argument('--plugin',
+                        type=str,
+                        default=None,
+                        dest='plugin',
+                        help="Folder to read the plugins, the default value is <style>/plugin",
+                        action='store')
+
+    parser.add_argument('--asset',
+                        type=str,
+                        default=None,
+                        dest='asset',
+                        help="Folder holding the asset files, the default value is <style>/asset",
+                        action='store')
+
+    parser.add_argument('--meta',
                         type=str,
                         default=None,
                         dest='meta',
                         help="Folder to read the metadata files, the default value is <root>/meta",
                         action='store')
 
-    parser.add_argument('-g', '--generate',
+    parser.add_argument('--generate',
                         type=str,
                         default=None,
                         dest=None,
                         help="Folder to generate the code, the default value is <root>/generate",
                         action='store')
 
-    parser.add_argument('-p', '--plugin',
+    parser.add_argument('--style',
                         type=str,
                         default=None,
-                        dest='plugin',
-                        help="Folder to read the plugins, the default value is <root>/plugin",
+                        dest='style',
+                        help="Style folder that contains asset, template, plugin, and static. Its default value is <root>/style",
                         action='store')
 
-    parser.add_argument('-a', '--asset',
-                        type=str,
-                        default=None,
-                        dest='asset',
-                        help="Folder holding the asset files, the default value is <root>/asset",
-                        action='store')
-
-    parser.add_argument('-r', '--root',
+    parser.add_argument('--root',
                         type=str,
                         default='.',
                         dest='root',
-                        help="Root folder that contains all other folders, the default value is '.'",
+                        help="Root folder that contains the folders style, meta, and generate. Its default value is '.'",
                         action='store')
 
     parser.add_argument('-v', '--verbose',
@@ -242,7 +185,15 @@ def parse_args():
                         dest='do',
                         help="Define one or more tasks to be executed. Will run all of them by default",
                         action='append')
-
+    
+    parser.add_argument('--new',
+                        help="Create a new root folder with the recommended structure",
+                        type=new_structure)
+    
+    parser.add_argument('--new-style',
+                        help="Create a new style folder with the recommended structure",
+                        type=new_style_structure)
+    
     args = parser.parse_args()
 
     if args.root is None:
@@ -254,17 +205,20 @@ def parse_args():
     if args.meta is None:
         args.meta = os.path.join(args.root, 'meta')
 
+    if args.style is None:
+        args.style = os.path.join(args.root, 'style')
+
     if args.static is None:
-        args.static = os.path.join(args.root, 'static')
+        args.static = os.path.join(args.style, 'static')
 
     if args.template is None:
-        args.template = os.path.join(args.root, 'template')
+        args.template = os.path.join(args.style, 'template')
 
     if args.plugin is None:
-        args.plugin = os.path.join(args.root, 'plugin')
+        args.plugin = os.path.join(args.style, 'plugin')
 
     if args.asset is None:
-        args.asset = os.path.join(args.root, 'asset')
+        args.asset = os.path.join(args.style, 'asset')
 
     if args.do is None:
         args.do = ['clean', 'static', 'template', 'plugin']
@@ -493,17 +447,15 @@ def do_plugin(args, inflater, meta):
 def main(*params):
     
     args = parse_args()
-    debug(json.dumps(args.__dict__, indent=2))
-
 
     info("Loading the metadata")
     meta = Meta(args)
-    debug(meta)
 
+    debug(meta)
+    debug(json.dumps(args.__dict__, indent=2))
 
     info("Loading the inflater")
     inflater = Inflater(args)
-
 
     info("Executing actions")
     for name in args.do:
