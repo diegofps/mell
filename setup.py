@@ -1,14 +1,7 @@
 
-#import mell.consts as c
+import mell.consts as c
 import setuptools
 
-name = "mell"
-version = "2.0.1"
-author = "Diego Souza"
-author_email = "diegofpsouza+mell@gmail.com"
-url = "https://github.com/diegofps/pywup"
-
-description = "A Metaprogramming Logic Layer designed to generate anything from template files"
 
 long_description_content_type = "text/markdown"
 with open("README.md", "r") as fh:
@@ -16,14 +9,14 @@ with open("README.md", "r") as fh:
 
 
 setuptools.setup(
-    name=name,
-    version=version,
-    author=author,
-    author_email=author_email,
-    description=description,
+    name=c.name,
+    version=c.version,
+    author=c.author,
+    author_email=c.author_email,
+    description=c.description,
     long_description=long_description,
     long_description_content_type=long_description_content_type,
-    url=url,
+    url=c.url,
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",

@@ -2,6 +2,11 @@
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
+try:
+    from . import consts
+except ImportError:
+    import consts
+
 import importlib.util
 import argparse
 import shutil
@@ -30,7 +35,6 @@ def error(*args):
         print("ERROR:", *args)
     sys.exit(1)
 
-
 def new_structure(value):
     if os.path.exists(value):
         error(f"Can't create a root structure, a folder with this name already exists: {value}")
@@ -53,9 +57,7 @@ def new_style_structure(value):
     
     sys.exit(0)
 
-
 def parse_args():
-
 
     parser = argparse.ArgumentParser(
                         prog='mel',
@@ -178,7 +180,7 @@ def parse_args():
                         help="String representing the start of a comment block, default is #|",
                         action='store')
 
-    parser.add_argument('-d', '--do',
+    parser.add_argument('--do',
                         type=str,
                         default=None,
                         choices=['clean', 'static', 'template', 'plugin'],
@@ -189,6 +191,10 @@ def parse_args():
     parser.add_argument('--new',
                         help="Create a new root folder with the recommended structure",
                         type=new_structure)
+    
+    parser.add_argument('--version',
+                        action='version', 
+                        version=f'{consts.name} {consts.version}')
     
     parser.add_argument('--new-style',
                         help="Create a new style folder with the recommended structure",
