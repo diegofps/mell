@@ -126,7 +126,7 @@ def parse_args():
                         help="display only warning messages and above",
                         action='store_true')
 
-    parser.add_argument('-d', '--do',
+    parser.add_argument('--do',
                         type=str,
                         metavar='NAME',
                         default=None,
