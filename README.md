@@ -26,7 +26,7 @@ You may constantly find that mell may be replaced by reflection or similar conce
 To use this library you must understand a few concepts. These are:
 
 * `metadata:` These is data describing what we want to generate. We use json format for it.
-* `style:` This is the set of features that are necessary to transform the metadata into something. It is composed by templates, assets, static files, and plugins.
+* `style:` This is the set of features that are necessary to transform the metadata into something. It is composed by templates, assets, static files, plugins, and logic rules.
 * `generated folder:` This is where the rendered files will be saved and you must never change these files. However, you may want to execute or compile them if you are generating a webserver or a latex template, for instance. 
 
 A style is composed of the following concepts:
@@ -35,6 +35,7 @@ A style is composed of the following concepts:
 * `static:` files that will not be modified. Mell will copy them directly to the generated folder, keeping the original path structure.
 * `asset:` files used by your style that are not automatically used by mell.
 * `plugin:` Scripts that will be executed by mell. These usually access the files in the asset folder.
+* `logic:` Scripts that will be executed in order by mell. These are used to validate and extend the metadata.
 
 # Basic folder structure
 
@@ -50,6 +51,7 @@ The following table describes the folders used by mell.
 | \<root\>/style/static | contains static files that will be copied as they are to the generate folder |
 | \<root\>/style/plugin | contains scripts that will be executed by mell. Use these to render multiple files from templates in the asset folder |
 | \<root\>/style/asset | contains template and other files that are not automatically used by mell. They may be used by plugins or other tools |
+| \<root\>/style/logic | contains scripts used automatically executed by mell to transform the metadata |
 
 If you want to create a new project using this structure with the root folder named testing_mell, you can use the following command.
 
@@ -200,7 +202,7 @@ mell --style styles/python --generate generates/python/en en
 mell --style styles/python --generate generates/python/pt pt
 ```
 
-This is how the project looks in the end.
+This is how the project looks like in the end.
 
 ```perl
 .
@@ -232,212 +234,46 @@ This is how the project looks in the end.
         └── template
             └── main.py
 ```
-# The metadata syntax
 
-Mell uses json to represent metadata. For instance, the following is a valid metadata file representing a letter. It may be located in `<root>/meta/letter_basic.json`.
+# The Pipeline
 
-```json
-{
-    "to": "Juliana",
-    "address": "juliana@gmail.com",
-    "subject": "Notification",
-    "opening": "Dear Ju,",
-    "first_paragraph": "I hope you are doing well :)",
-    "paragraphs": ["This is a standard message just to remind you to drink water.", "Did you drink water today?"],
-    "last_paragraph": "I am always here for you.",
-    "ending": "Your friend,",
-    "signature": "Bot"
-}
-```
+Sometimes it is important to understand the order in which the operations are executed. The list below describe these operations in their standard order.
 
-Currently, the only one reserved word we use is `__parent__`. It allows us to generate a new metadata based on a previous one. It works similarly to inheritance in object oriented languages. The following example, located in `<root>/meta/letter_beach.json`, shows an extension to the previous metadata that customizes the attributes first_paragraph, paragraphs, and last_paragraph.
+1. Load metadata
+1. Execute logic scripts
+1. Actions to generate the output:
+>4. Clean output folder [clean]
+>1. Copy static files [static]
+>1. Render templates and copy them to output [template]
+>1. Execute plugin scripts [plugin]
 
-```json
-{
-    "__parent__": "letter_basic",
-    "first_paragraph": "",
-    "paragraphs": ["I checked the weather for this weekend and it will be great to go to the beach.", "Would you like me to invite a friend?"],
-    "last_paragraph": ""
-}
-```
-
-We will talk a little bit more about the template syntax in the next section, but given the following template file is saved in `<root>/style/template/letter.txt`.
-
-```c
-To: |= meta.to. =| <|= meta.address =|>
-Subject: |= meta.subject. =|
-
-|? if meta.opening. ?|
-|= meta.opening. =|
-
-|? endif ?|
-|? if meta.first_paragraph. ?|
-|= meta.first_paragraph. =|
-
-|? endif ?|
-|? for paragraph in meta.paragraphs. ?|
-|= paragraph =|
-
-|? endfor ?|
-|? if meta.last_paragraph. ?|
-|= meta.last_paragraph. =|
-
-|? endif ?|
-|= meta.ending. =|
-|= meta.signature. =|
-
-```
-
-We may generate a letter with the first content, or the second content depending on the metadata we use. For instance, if we run `mell letter_basic` inside `<root>` we will generate the following content in the file `<root>/generate/letter.txt`:
-
-```
-To: Juliana <juliana@gmail.com>
-Subject: Notification
-
-Dear Ju,
-
-I hope you are doing well :)
-
-This is a standard message just to remind you to drink water.
-
-Did you drink water today?
-
-I am always here for you.
-
-Your friend,
-Bot
-```
-
-Whereas `mell letter_beach` would generate the following:
-
-```
-To: Juliana <juliana@gmail.com>
-Subject: Notification
-
-Dear Ju,
-
-I checked the weather for this weekend and it will be great to go to the beach.
-
-Would you like me to invite a friend?
-
-Your friend,
-Bot
-```
-
-
-# The template syntax
-
-Mell currently uses [jinja2](https://jinja.palletsprojects.com) to parse the templates, but we don't use the standard tokens as we also want to generate templates from our templates, like those used by classic web servers. The standard tokens also cause problems with latex scripts. The following table summarizes the tokens we use and a short description of them.
-
-| type | description | syntax |
-| ---- | ----------- | ------ |
-| block | tokens used to wrap pieces of code, like a for, endfor, if, else, endif, and so on. These will not produce any output in the rendered template. | \|? for x in items ?\| |
-| variables | tokens used to wrap a piece of code that will produce a string that must be inserted in the rendered template | \|= for x in items =\| |
-| comments | tokens used to wrap a comment. These will not be executed and will not generate output in the final render | \|# this is a comment #\| |
-
-You may also customize the tokens to anything you want if you find that these tokens conflict with the source you are generating to. Customize them with the following commands.
+Loading the metadata and executing the logic scripts is always executed first and can't be changed. The list of actions to generate the output, though, can be modified or canceled. To modify the list of actions we use the command `--do <action_name>`. By default, mell will execute all of them but if we use the parameter `--do` it will execute only the tasks it received. A few examples are listed bellow.
 
 ```shell
-# Customize the block tokens
-mell --block_start '{B:' --block_end ':B}' metadata
-
-# Customize the variable tokens
-mell --variable_start '{V:' --variable_end ':V}' metadata
-
-# Customize the comment tokens
-mell --comment_start '{C:' --comment_end ':C}' metadata
-
-# Customizing all of them
-mell --block_start '{B:' --block_end ':B}' --variable_start '{V:' --variable_end ':V}' --comment_start '{C:' --comment_end ':C}' metadata
-```
-
-There are two special variables that we can use in the template syntax. These are:
-
-* `meta:` to access the data in the metadata
-* `inflater:` to inflate nested templates located in the asset
-
-# Using the plugin and asset folders
-
-This example will use a metadata to generate a bunch of letters, each addressed to a different client. We will use a plugin because the number of clients is defined on a list inside the metadata. Therefore, we will use a single template file inside the asset folder and the plugin will generate multiple files in the output. A similar approach could be used to generate model classes for an ORM, for instance.
-
-Create a new mell project and enter it.
-
-```shell
-mell --new plugin_test
-cd plugin_test
-```
-
-Create a file in `plugin_test/style/asset/letter.txt` with the following content.
-
-```
-Dear |= meta.name. =|,
-
-Your wishlist item '|= meta.product. =|' is now on sale with |= meta.discount. =| off. 
-
-If this is still of your interest, you can check it [here](|= meta.product_url. =|). If you want to see or manage your wishlist items, [click here](http://shopping.com/wishlist).
-
-Best Regards,
-Bot
-```
-
-Create a file in `plugin_test/style/plugin/example_plugin.py` with the following content.
-
-```python
-def main(inflater, meta):
-    for i, item in enumerate(meta.clients.):
-        inflater.inflateAsset("letter.txt", item, to_file=f"examples/letter_{i}.txt")
-```
-
-Create a file in `plugin_test/meta/data.json` with the following content.
-```json
-{
-    "clients": [
-        {
-            "name": "Diego",
-            "product": "Tablet",
-            "discount": "50%",
-            "product_url": "http://shopping.com/item/12345"
-        },
-        {
-            "name": "Pedro",
-            "product": "Microscope",
-            "discount": "10%",
-            "product_url": "http://shopping.com/item/54321"
-        },
-        {
-            "name": "Jéssica",
-            "product": "Professional Easel",
-            "discount": "10%",
-            "product_url": "http://shopping.com/item/21543"
-        }
-    ]
-}
-```
-
-Now, inside the `<root>` folder, execute the following command:
-
-```shell
+# These two calls are the same
+mell --do clean --do static --do template --do plugin data
 mell data
+
+# This will only generate output files based on the template folder
+mell --do template data
+
+# This will only clean the generated folder
+mell --do clean data
+
+# The word 'nothing' is a special keyword. It will not do any action but will still load the metadata and execute logic scripts. This is useful when used with -v (verose mode) or --show-metadata (display the metadata after executing the logic scripts).
+mell --do nothing data
+mell --do nothing -v data
+mell --do nothing --show-metadata data
 ```
 
-Three files will be generated in `<root>/generate/examples`. The first file is `letter_0.txt`, containing the following content. The remaining files contain similar content, but with their remaining data:
+# Tutorials
 
-```
-Dear Diego,
+* [Metadata](https://github.com/diegofps/mell/blob/main/docs/metadata.md) - Explains how the metadata work and how to inherit and extend from existing metadata;
+* [Template](https://github.com/diegofps/mell/blob/main/docs/template.md) - Explains the template syntax and how to customize it;
+* [Plugin and Asset](https://github.com/diegofps/mell/blob/main/docs/plugin_and_asset.md) - Shows how to use a plugin script to generate multiple output files from a single template;
+* [Logic](https://github.com/diegofps/mell/blob/main/docs/logic.md) - Shows how to extend extend the input metadata, generating more metadata and preventing complex rules in template files.
 
-As you have added the item Tablet on your wishlist, I am here to tell you that this item is now available with a discount of 50%. 
-
-If this is still of your interest, you can check it [here](http://shopping.com/item/12345). If you want to see or manage your entire wishlist you may click [here](http://shopping.com/wishlist).
-
-Best Regards,
-Bot
-```
-
-# Using the logic folder to extend the metadata
-
-
-
-## Special Command Options
+# List of useful command options
 
 These are a few examples of common operations.
 
@@ -448,6 +284,15 @@ mell --new project_name
 # This will create a folder named style2 with the recommended style folder structure (use it inside the root directory to keep things organized)
 mell --new-style project_name
 
+# Create a new plugin file as <root>/style/plugin/plugin_name.py
+mell --new-plugin plugin_name
+
+# Create a new logic file as <root>/style/logic/<timestamp>.logic_name.py
+mell --new-logic logic_name
+
+# Display the version number and exit
+mell --version
+
 # Display more info during execution (verbose mode)
 mell -v en
 
@@ -455,13 +300,13 @@ mell -v en
 mell -q en
 
 # Specify what we want to generate
-mell -d clean -d static -d template -d plugin en
+mell --do clean --do static --do template --do plugin en
 
 # Only clean the output folder
-mell -d clean en
+mell --do clean en
 
 # Only generate files from templates
-mell -d template en
+mell --do template en
 
 # Specify a different style folder. This will make mell use the folders template, asset, plugin, and static that inside it.
 mell --style style2 en
@@ -470,10 +315,10 @@ mell --style style2 en
 mell --generate generate2 en
 
 # An example with custom style names, distinct output folders and two metadata files. We are assuming the style folders are on local directory and named python and cpp.
-mell --style python --generate genPythonEn en
-mell --style python --generate genPythonPt pt
-mell --style cpp --generate genCppEn en
-mell --style cpp --generate genCppPt pt
+mell --style styles/python --generate generates/python/en en
+mell --style styles/python --generate generates/python/pt pt
+mell --style styles/cpp --generate generates/cpp/en en
+mell --style styles/cpp --generate generates/cpp/pt pt
 ```
 
 # Source Code

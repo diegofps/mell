@@ -12,11 +12,12 @@ import argparse
 import shutil
 import json
 import glob
+import time
 import sys
 import os
 
 
-LOG_LEVEL = 1
+LOG_LEVEL = 2
 
 def debug(*args):
     if LOG_LEVEL <= 0:
@@ -35,32 +36,74 @@ def error(*args):
         print("ERROR:", *args)
     sys.exit(1)
 
-def new_structure(value):
-    if os.path.exists(value):
-        error(f"Can't create a root structure, a folder with this name already exists: {value}")
+def run_new_root(args):
+
+    info("Creating a new root structure at", args.new_root)
+
+    if os.path.exists(args.new_root):
+        error(f"Can't create a root structure, a folder with this name already exists: {args.new_root}")
         
-    for foldernames in [("style", "asset"), ("style", "template"), ("style", "plugin"), ("style", "static"), ("meta",), ("generate",)]:
-        path = os.path.join(value, *foldernames)
-        info(f"  Creating folder {path}")
+    for foldernames in [("style", "asset"), ("style", "template"), ("style", "plugin"), ("style", "static"), ("style", "logic"), ("meta",), ("generate",)]:
+        path = os.path.join(args.new_root, *foldernames)
+        info(f"  {path}")
         os.makedirs(path)
     
     sys.exit(0)
 
-def new_style_structure(value):
-    if os.path.exists(value):
-        error(f"Can't create a style structure, a folder with this name already exists: {value}")
+def run_new_style(args):
+
+    info("Creating a new style structure at", args.new_style)
+    
+    if os.path.exists(args.new_style):
+        error(f"Can't create a style structure, a folder with this name already exists: {args.new_style}")
         
     for foldernames in ["asset", "template", "plugin", "static"]:
-        path = os.path.join(value, foldernames)
-        info(f"  Creating folder {path}")
+        path = os.path.join(args.new_style, foldernames)
+        info(f"  {path}")
         os.makedirs(path)
+    
+    sys.exit(0)
+
+def run_new_plugin(args):
+
+    filepath = os.path.join(args.plugin, f"{args.new_plugin}.py")
+    info("Creating a new plugin script")
+    
+    if os.path.exists(filepath):
+        error("Can't create the plugin. A plugin with this name already exists at", filepath)
+    
+    info(f"  {filepath}")
+    dirname = os.path.dirname(filepath)
+    os.makedirs(dirname, exist_ok=True)
+
+    with open(filepath, 'w') as fout:
+        fout.write("def plugin(meta, inflator):\n    pass\n\n")
+    
+    sys.exit(0)
+
+def run_new_logic(args):
+
+    info("Creating a new logic script")
+    
+    timestamp = int(time.time())
+    filepath = os.path.join(args.logic, f"{timestamp}.{args.new_logic}.py")
+
+    if os.path.exists(filepath):
+        error("Can't create the plugin. A plugin with this name already exists at", filepath)
+    
+    info(f"  {filepath}")
+    dirname = os.path.dirname(filepath)
+    os.makedirs(dirname, exist_ok=True)
+
+    with open(filepath, 'w') as fout:
+        fout.write("def logic(meta):\n    pass\n\n")
     
     sys.exit(0)
 
 def parse_args():
 
     parser = argparse.ArgumentParser(
-                        prog='mel',
+                        prog='mell',
                         description='Metaprogramming layer designed to generates anything from template files.',
                         epilog="Check my README.md to learn more tips on how to use this application: https://github.com/diegofps/mell/blob/main/README.md",
                         formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -68,6 +111,7 @@ def parse_args():
     parser.add_argument('metadata',
                         type=str,
                         metavar='METADATA',
+                        nargs='?',
                         help="name of file(s) located inside the meta folder. If multiple are provided, separated by comma, a merge will be performed.")
 
     parser.add_argument('--template',
@@ -96,6 +140,13 @@ def parse_args():
                         default=None,
                         dest='asset',
                         help="Folder holding the asset files, the default value is <style>/asset",
+                        action='store')
+
+    parser.add_argument('--logic',
+                        type=str,
+                        default=None,
+                        dest='logic',
+                        help="Folder holding the logic files, the default value is <style>/logic",
                         action='store')
 
     parser.add_argument('--meta',
@@ -136,6 +187,18 @@ def parse_args():
                         default=None,
                         dest='quiet',
                         help="Display only warning messages and above",
+                        action='store_true')
+
+    parser.add_argument('--show-metadata',
+                        default=False,
+                        dest='show_metadata',
+                        help="Display metadata after logic scripts",
+                        action='store_true')
+
+    parser.add_argument('--show-parameters',
+                        default=False,
+                        dest='show_parameters',
+                        help="Display command line parameters",
                         action='store_true')
 
     parser.add_argument('--block_start',
@@ -183,22 +246,42 @@ def parse_args():
     parser.add_argument('--do',
                         type=str,
                         default=None,
-                        choices=['clean', 'static', 'template', 'plugin'],
+                        choices=['nothing', 'clean', 'static', 'template', 'plugin'],
                         dest='do',
                         help="Define one or more tasks to be executed. Will run all of them by default",
                         action='append')
     
     parser.add_argument('--new',
-                        help="Create a new root folder with the recommended structure",
-                        type=new_structure)
+                        type=str,
+                        default=None,
+                        dest="new_root",
+                        help="Create a new root folder using the recommended structure",
+                        action='store')
+    
+    parser.add_argument('--new-style',
+                        type=str,
+                        default=None,
+                        dest="new_style",
+                        help="Create a new style folder using the recommended structure",
+                        action='store')
+    
+    parser.add_argument('--new-plugin',
+                        type=str,
+                        default=None,
+                        dest="new_plugin",
+                        help="Create a new plugin script using the name provided",
+                        action='store')
+    
+    parser.add_argument('--new-logic',
+                        type=str,
+                        default=None,
+                        dest="new_logic",
+                        help="Create a new logic script using the name provided",
+                        action='store')
     
     parser.add_argument('--version',
                         action='version', 
                         version=f'{consts.name} {consts.version}')
-    
-    parser.add_argument('--new-style',
-                        help="Create a new style folder with the recommended structure",
-                        type=new_style_structure)
     
     args = parser.parse_args()
 
@@ -226,6 +309,9 @@ def parse_args():
     if args.asset is None:
         args.asset = os.path.join(args.style, 'asset')
 
+    if args.logic is None:
+        args.logic = os.path.join(args.style, 'logic')
+
     if args.do is None:
         args.do = ['clean', 'static', 'template', 'plugin']
 
@@ -235,11 +321,27 @@ def parse_args():
         error("You can't use quiet (-q) and verbose (-v) modes at the same time")
 
     elif args.quiet:
-        LOG_LEVEL = 2
+        LOG_LEVEL = 3
 
     elif args.verbose:
         LOG_LEVEL = 0
 
+    if args.new_root:
+        run_new_root(args)
+    
+    if args.new_style:
+        run_new_style(args)
+
+    if args.new_plugin:
+        run_new_plugin(args)
+
+    if args.new_logic:
+        run_new_logic(args)
+
+    if args.metadata is None:
+        parser.print_help()
+        sys.exit(0)
+    
     return args
 
 
@@ -283,33 +385,55 @@ def update_dict_recursively(dst, src):
 
 class MetaIterator:
 
-    def __init__(self, iterator):
+    def __init__(self, iterator, is_dict=False):
         self.iterator = iterator
+        self.is_dict = is_dict
     
     def __next__(self):
-        return Meta(self.iterator.__next__())
+        value = self.iterator.__next__()
+        if self.is_dict:
+            return value[0], Meta(value[1])
+        else:
+            return Meta(value)
 
 
 class Meta:
 
     def __init__(self, value):
 
-        self.__dict__['v'] = value
+        self.__dict__['value'] = value
     
     def __iter__(self):
-        
-        v = self.v
+
+        v = self.value
         if v is None:
             raise IndexError("Trying to iterate over a metadata that does not exist.")
-        return MetaIterator(v.__iter__())
-      
+        if isinstance(v, dict):
+            return MetaIterator(v.items().__iter__(), is_dict=True)
+        else:
+            return MetaIterator(v.__iter__())
+    
+    def __contains__(self, index):
+        
+        v = self.value
+        if v is None:
+            raise IndexError("Trying to check membership in a metadata that does not exist.")
+        return index in v
+    
+    def __eq__(self, other):
+
+        if isinstance(other, Meta):
+            return self.value == other.value
+        else:
+            return self.value == other
+    
     def __bool__(self):
 
-        return True if self.v else False
+        return True if self.value else False
 
     def __getattr__(self, index):
 
-        v = self.v
+        v = self.value
         if v is None:
             return Meta(None)
         elif index in v:
@@ -319,34 +443,41 @@ class Meta:
     
     def __getitem__(self, index):
         
-        v = self.v
+        v = self.value
         if v is None:
             return Meta(None)
         else:
             return Meta(v[index])
     
+    def __setitem__(self, index, value):
+        
+        v = self.value
+        if v is None:
+            raise IndexError("Trying to set an attribute to a metadata that does not exist.")
+        v[index] = value
+    
     def __setattr__(self, index, value):
         
-        v = self.v
+        v = self.value
         if v is None:
             raise IndexError("Trying to set an attribute to a metadata that does not exist.")
         v[index] = value
     
     def __len__(self):
         
-        v = self.v
+        v = self.value
         if v is None:
             raise IndexError("Trying to get the length of a metadata that does not exist.")
         return len(v)
 
     def __repr__(self):
         
-        v = self.v
+        v = self.value
         return repr(v)
 
     def __str__(self) -> str:
 
-        v = self.v
+        v = self.value
         return str(v)
 
 
@@ -413,6 +544,8 @@ class Inflater:
         with open(filepath_out, "w") as fout:
             fout.write(text)
         
+def do_nothing(args, inflater, meta):
+    pass
 
 def do_clean(args, inflater, meta):
 
@@ -466,8 +599,41 @@ def do_plugin(args, inflater, meta):
             plugin_spec = importlib.util.spec_from_file_location(plugin_name, filepath)
             plugin = importlib.util.module_from_spec(plugin_spec)
             plugin_spec.loader.exec_module(plugin)
-            plugin.main(inflater, meta)
+            plugin.plugin(meta, inflater)
 
+def get_logic_files(args):
+
+    filepaths = []
+
+    for filepath in glob.glob(os.path.join(args.logic, '**', '*.py'), recursive=True):
+        if os.path.isfile(filepath):
+            filename = os.path.basename(filepath)
+            cells = filename.split('.', 1)
+            if len(cells) == 2:
+                try:
+                    timestamp = int(cells[0])
+                    filepaths.append((timestamp, filepath))
+                except ValueError:
+                    pass
+    
+    filepaths.sort()
+    return filepaths
+
+def apply_logic_scripts(args, meta):
+    
+    info("Executing logic files")
+    
+    rootpath = os.path.dirname(args.logic)
+    filepaths = get_logic_files(args)
+    
+    for _, filepath in filepaths:
+        logic_name = os.path.relpath(filepath, rootpath).replace('\\', '.').replace('/', '.')
+        debug("  ", filepath)
+        
+        plugin_spec = importlib.util.spec_from_file_location(logic_name, filepath)
+        plugin = importlib.util.module_from_spec(plugin_spec)
+        plugin_spec.loader.exec_module(plugin)
+        plugin.logic(meta)
 
 def main(*params):
     
@@ -481,8 +647,15 @@ def main(*params):
         warn(f"Folder meta does not exists - {args.meta}")
         meta = Meta({})
     
-    debug("Metadata:", json.dumps(meta.v, indent=2))
-    debug("Parameters:", json.dumps(args.__dict__, indent=2))
+    apply_logic_scripts(args, meta)
+    
+    if args.show_metadata:
+        print("METADATA:")
+        print(json.dumps(meta.value, indent=2))
+    
+    if args.show_parameters:
+        print("Parameters:")
+        print(json.dumps(args.__dict__, indent=2))
 
     info("Loading the inflater")
     inflater = Inflater(args)
