@@ -105,184 +105,204 @@ def parse_args():
     parser = argparse.ArgumentParser(
                         prog='mell',
                         description='Metaprogramming layer designed to generates anything from template files.',
-                        epilog="Check my README.md to learn more tips on how to use this application: https://github.com/diegofps/mell/blob/main/README.md",
+                        epilog="Check the README.md to learn more tips on how to use this application: https://github.com/diegofps/mell/blob/main/README.md",
                         formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument('metadata',
                         type=str,
                         metavar='METADATA',
                         nargs='?',
-                        help="name of file(s) located inside the meta folder. If multiple are provided, separated by comma, a merge will be performed.")
-
-    parser.add_argument('--template',
-                        type=str,
-                        default=None,
-                        dest='template',
-                        help="Folder to read the template files, the default value is <style>/template",
-                        action='store')
-
-    parser.add_argument('--static',
-                        type=str,
-                        default=None,
-                        dest='static',
-                        help="Folder to read the static files, the default value is <style>/static",
-                        action='store')
-
-    parser.add_argument('--plugin',
-                        type=str,
-                        default=None,
-                        dest='plugin',
-                        help="Folder to read the plugins, the default value is <style>/plugin",
-                        action='store')
-
-    parser.add_argument('--asset',
-                        type=str,
-                        default=None,
-                        dest='asset',
-                        help="Folder holding the asset files, the default value is <style>/asset",
-                        action='store')
-
-    parser.add_argument('--logic',
-                        type=str,
-                        default=None,
-                        dest='logic',
-                        help="Folder holding the logic files, the default value is <style>/logic",
-                        action='store')
-
-    parser.add_argument('--meta',
-                        type=str,
-                        default=None,
-                        dest='meta',
-                        help="Folder to read the metadata files, the default value is <root>/meta",
-                        action='store')
-
-    parser.add_argument('--generate',
-                        type=str,
-                        default=None,
-                        dest=None,
-                        help="Folder to generate the code, the default value is <root>/generate",
-                        action='store')
-
-    parser.add_argument('--style',
-                        type=str,
-                        default=None,
-                        dest='style',
-                        help="Style folder that contains asset, template, plugin, and static. Its default value is <root>/style",
-                        action='store')
-
-    parser.add_argument('--root',
-                        type=str,
-                        default='.',
-                        dest='root',
-                        help="Root folder that contains the folders style, meta, and generate. Its default value is '.'",
-                        action='store')
+                        help="name of file(s) located inside the meta folder. If multiple names are provided, separated by comma, a merge will be performed.")
 
     parser.add_argument('-v', '--verbose',
                         default=None,
                         dest='verbose',
-                        help="Allow debug log messages to be displayed",
+                        help="allow debug log messages to be displayed",
                         action='store_true')
 
     parser.add_argument('-q', '--quiet',
                         default=None,
                         dest='quiet',
-                        help="Display only warning messages and above",
+                        help="display only warning messages and above",
                         action='store_true')
 
-    parser.add_argument('--show-metadata',
-                        default=False,
-                        dest='show_metadata',
-                        help="Display metadata after logic scripts",
-                        action='store_true')
-
-    parser.add_argument('--show-parameters',
-                        default=False,
-                        dest='show_parameters',
-                        help="Display command line parameters",
-                        action='store_true')
-
-    parser.add_argument('--block_start',
+    parser.add_argument('-d', '--do',
                         type=str,
-                        default='|?',
-                        dest='block_start',
-                        help="String representing the start of a code block, default is |?",
-                        action='store')
-
-    parser.add_argument('--block_end',
-                        type=str,
-                        default='?|',
-                        dest='block_end',
-                        help="String representing the start of a code block, default is ?|",
-                        action='store')
-
-    parser.add_argument('--variable_start',
-                        type=str,
-                        default='|=',
-                        dest='variable_start',
-                        help="String representing the start of a printable block, default is |=",
-                        action='store')
-
-    parser.add_argument('--variable_end',
-                        type=str,
-                        default='=|',
-                        dest='variable_end',
-                        help="String representing the start of a printable block, default is =|",
-                        action='store')
-
-    parser.add_argument('--comment_start',
-                        type=str,
-                        default='|#',
-                        dest='comment_start',
-                        help="String representing the start of a comment block, default is |#",
-                        action='store')
-
-    parser.add_argument('--comment_end',
-                        type=str,
-                        default='#|',
-                        dest='comment_end',
-                        help="String representing the start of a comment block, default is #|",
-                        action='store')
-
-    parser.add_argument('--do',
-                        type=str,
+                        metavar='NAME',
                         default=None,
                         choices=['nothing', 'clean', 'static', 'template', 'plugin'],
                         dest='do',
-                        help="Define one or more tasks to be executed. Will run all of them by default",
+                        help="define one or more action to be executed [nothing, clean, static, template, plugin]",
                         action='append')
+
+    parser.add_argument('--root',
+                        type=str,
+                        metavar='PATH',
+                        default='.',
+                        dest='root',
+                        help="root folder that contains the folders style, meta, and generate [.]",
+                        action='store')
     
+    parser.add_argument('--style',
+                        type=str,
+                        metavar='PATH',
+                        default=None,
+                        dest='style',
+                        help="style folder that contains asset, template, plugin, and static [<root>/style]",
+                        action='store')
+
+    parser.add_argument('--template',
+                        type=str,
+                        metavar='PATH',
+                        default=None,
+                        dest='template',
+                        help="folder to read the template files [<style>/template]",
+                        action='store')
+
+    parser.add_argument('--static',
+                        type=str,
+                        metavar='PATH',
+                        default=None,
+                        dest='static',
+                        help="folder to read the static files [<style>/static]",
+                        action='store')
+
+    parser.add_argument('--plugin',
+                        type=str,
+                        metavar='PATH',
+                        default=None,
+                        dest='plugin',
+                        help="folder to read the plugins [<style>/plugin]",
+                        action='store')
+
+    parser.add_argument('--asset',
+                        type=str,
+                        metavar='PATH',
+                        default=None,
+                        dest='asset',
+                        help="folder holding the asset files [<style>/asset]",
+                        action='store')
+
+    parser.add_argument('--logic',
+                        type=str,
+                        metavar='PATH',
+                        default=None,
+                        dest='logic',
+                        help="folder holding the logic files [<style>/logic]",
+                        action='store')
+
+    parser.add_argument('--meta',
+                        type=str,
+                        metavar='PATH',
+                        default=None,
+                        dest='meta',
+                        help="folder to read the metadata files [<root>/meta]",
+                        action='store')
+
+    parser.add_argument('--generate',
+                        type=str,
+                        metavar='PATH',
+                        default=None,
+                        dest=None,
+                        help="folder to generate the output files [<root>/generate]",
+                        action='store')
+
+    parser.add_argument('-M', '--show-metadata',
+                        default=False,
+                        dest='show_metadata',
+                        help="display the metadata, after execution of the logic scripts",
+                        action='store_true')
+
+    parser.add_argument('-P', '--show-parameter',
+                        default=False,
+                        dest='show_parameters',
+                        help="display all command line parameters and their values, received or not",
+                        action='store_true')
+
     parser.add_argument('--new',
                         type=str,
+                        metavar='NAME',
                         default=None,
                         dest="new_root",
-                        help="Create a new root folder using the recommended structure",
+                        help="create a new root folder using the recommended structure",
                         action='store')
     
     parser.add_argument('--new-style',
                         type=str,
+                        metavar='NAME',
                         default=None,
                         dest="new_style",
-                        help="Create a new style folder using the recommended structure",
+                        help="create a new style folder using the recommended structure",
                         action='store')
     
     parser.add_argument('--new-plugin',
                         type=str,
+                        metavar='NAME',
                         default=None,
                         dest="new_plugin",
-                        help="Create a new plugin script using the name provided",
+                        help="create a new plugin script using the name provided",
                         action='store')
     
     parser.add_argument('--new-logic',
                         type=str,
+                        metavar='NAME',
                         default=None,
                         dest="new_logic",
-                        help="Create a new logic script using the name provided",
+                        help="create a new logic script using the name provided",
                         action='store')
     
     parser.add_argument('--version',
                         action='version', 
                         version=f'{consts.name} {consts.version}')
     
+    parser.add_argument('--block_start',
+                        type=str,
+                        metavar='STR',
+                        default='|?',
+                        dest='block_start',
+                        help="string representing the start of a code block [|?]",
+                        action='store')
+
+    parser.add_argument('--block_end',
+                        type=str,
+                        metavar='STR',
+                        default='?|',
+                        dest='block_end',
+                        help="string representing the start of a code block [?|]",
+                        action='store')
+
+    parser.add_argument('--variable_start',
+                        type=str,
+                        metavar='STR',
+                        default='|=',
+                        dest='variable_start',
+                        help="string representing the start of a printable block [|=]",
+                        action='store')
+
+    parser.add_argument('--variable_end',
+                        type=str,
+                        metavar='STR',
+                        default='=|',
+                        dest='variable_end',
+                        help="string representing the start of a printable block [=|]",
+                        action='store')
+
+    parser.add_argument('--comment_start',
+                        type=str,
+                        metavar='STR',
+                        default='|#',
+                        dest='comment_start',
+                        help="string representing the start of a comment block [|#]",
+                        action='store')
+
+    parser.add_argument('--comment_end',
+                        type=str,
+                        metavar='STR',
+                        default='#|',
+                        dest='comment_end',
+                        help="string representing the start of a comment block [#|]",
+                        action='store')
+
     args = parser.parse_args()
 
     if args.root is None:
