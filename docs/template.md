@@ -25,7 +25,8 @@ mell --comment_start '{C:' --comment_end ':C}' metadata
 mell --block_start '{B:' --block_end ':B}' --variable_start '{V:' --variable_end ':V}' --comment_start '{C:' --comment_end ':C}' metadata
 ```
 
-There are two special variables that we can use in the template syntax. These are:
+There are three special variables that we can use in the template syntax. These are:
 
-* `meta:` to access the data in the metadata. Use `'.'` to access metadata attributes and `'[]'` to access array elements.
-* `inflater:` to inflate nested templates located in the asset. Use `inflater.inflateAsset("path_to_asset_file", meta)` to inflate an asset into your template.
+* `meta:` to access the data in the metadata. Use `'.'` to access metadata attributes and `'[]'` to access array elements;
+* `inflater:` to inflate nested templates located in the asset. Use `inflater.inflate("path_to_asset_file", meta)` to inflate an asset into this position;
+* `args:` to access the program parameters and program parameters.

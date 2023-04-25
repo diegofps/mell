@@ -29,10 +29,10 @@ Bot
 
 ## Create the plugin
 
-Create a file in `<root>/style/plugin/example_plugin.py` with the following content.
+Create a file in `<root>/style/plugin/example_plugin.py` with the following content. 
 
 ```python
-def plugin(meta, inflater):
+def plugin(args, meta, inflater):
     for i, item in enumerate(meta.clients):
         inflater.inflateAsset("letter.txt", item, to_file=f"examples/letter_{i}.txt")
 ```
@@ -109,3 +109,6 @@ Best Regards,
 Bot
 ```
 
+# Final considerations
+
+Keep in mind that your output don't need to always come from template files in the asset folder. You could call an external program, write your with using open, ask a library to generate something else and save it there, etc.

@@ -77,7 +77,7 @@ def run_new_plugin(args):
     os.makedirs(dirname, exist_ok=True)
 
     with open(filepath, 'w') as fout:
-        fout.write("def plugin(meta, inflator):\n    pass\n\n")
+        fout.write("def plugin(args, meta, inflator):\n    pass\n\n")
     
     sys.exit(0)
 
@@ -96,7 +96,7 @@ def run_new_logic(args):
     os.makedirs(dirname, exist_ok=True)
 
     with open(filepath, 'w') as fout:
-        fout.write("def logic(meta):\n    pass\n\n")
+        fout.write("def logic(args, meta):\n    pass\n\n")
     
     sys.exit(0)
 
@@ -111,7 +111,7 @@ def parse_args():
     parser.add_argument('metadata',
                         type=str,
                         metavar='METADATA',
-                        nargs='?',
+                        nargs='*',
                         help="name of file(s) located inside the meta folder. If multiple names are provided, separated by comma, a merge will be performed.")
 
     parser.add_argument('-v', '--verbose',
@@ -125,6 +125,13 @@ def parse_args():
                         dest='quiet',
                         help="display only warning messages and above",
                         action='store_true')
+
+    parser.add_argument('--set',
+                        default=[],
+                        nargs=2,
+                        dest='set',
+                        help="customize the value of individual properties in the metadata",
+                        action='append')
 
     parser.add_argument('--do',
                         type=str,
@@ -369,8 +376,14 @@ def load_metadata(args, meta_filenames):
 
     meta = {}
 
-    for filename in meta_filenames.split(','):
-        filepath = os.path.join(args.meta, filename) + ".json"
+    if not meta_filenames:
+        return meta
+
+    for metadata_name in meta_filenames[0].split(','):
+        if not metadata_name:
+            continue
+
+        filepath = os.path.join(args.meta, metadata_name) + ".json"
         
         with open(filepath, "r") as fin:
             meta_parent = json.loads(fin.read())
@@ -528,41 +541,31 @@ class Inflater:
             lstrip_blocks=True
         )
     
-    def inflateTemplate(self, relpath, meta, to_file=None):
+    def inflate(self, relpath, meta, to_file=None, from_asset=True):
         
-        if self.template_env is None:
-            raise IOError("Missing template folder")
+        if from_asset:
+            if self.asset_env is None:
+                raise IOError("Missing asset folder")
+            template = self.asset_env.get_template(relpath)
         
-        template = self.template_env.get_template(relpath)
-        text = template.render(meta=meta, inflater=self)
+        else:
+            if self.template_env is None:
+                raise IOError("Missing template folder")
+            template = self.template_env.get_template(relpath)
+        
+        text = template.render(args=self.args, meta=meta, inflater=self)
 
         if to_file is not None:
-            self._save_as_generated_file(text, to_file)
-        
-        return text
-    
-    def inflateAsset(self, relpath, meta, to_file=None):
-        
-        if self.asset_env is None:
-            raise IOError("Missing asset folder")
-        
-        template = self.asset_env.get_template(relpath)
-        text = template.render(meta=meta, inflater=self)
 
-        if to_file is not None:
-            self._save_as_generated_file(text, to_file)
-        
-        return text
-    
-    def _save_as_generated_file(self, text, relpath):
+            filepath_out = os.path.join(self.args.generate, relpath)
+            folderpath_out = os.path.dirname(filepath_out)
+            
+            os.makedirs(folderpath_out, exist_ok=True)
+            
+            with open(filepath_out, "w") as fout:
+                fout.write(text)
 
-        filepath_out = os.path.join(self.args.generate, relpath)
-        folderpath_out = os.path.dirname(filepath_out)
-        
-        os.makedirs(folderpath_out, exist_ok=True)
-        
-        with open(filepath_out, "w") as fout:
-            fout.write(text)
+        return text
         
 def do_nothing(args, inflater, meta):
     pass
@@ -593,7 +596,7 @@ def do_static(args, inflater, meta):
             os.makedirs(folderpath_out, exist_ok=True)
             shutil.copy2(filepath, filepath_out)
 
-def do_template(args, inflater, meta):
+def do_template(args, inflater:Inflater, meta:Meta):
 
     info("Generating template based files")
 
@@ -602,7 +605,7 @@ def do_template(args, inflater, meta):
             relpath = os.path.relpath(filepath, args.template)
             debug("  ", relpath)
 
-            inflater.inflateTemplate(relpath, meta, to_file=relpath)
+            inflater.inflate(relpath, meta, to_file=relpath, from_asset=False)
 
 
 def do_plugin(args, inflater, meta):
@@ -619,7 +622,7 @@ def do_plugin(args, inflater, meta):
             plugin_spec = importlib.util.spec_from_file_location(plugin_name, filepath)
             plugin = importlib.util.module_from_spec(plugin_spec)
             plugin_spec.loader.exec_module(plugin)
-            plugin.plugin(meta, inflater)
+            plugin.plugin(args, meta, inflater)
 
 def get_logic_files(args):
 
@@ -653,7 +656,39 @@ def apply_logic_scripts(args, meta):
         plugin_spec = importlib.util.spec_from_file_location(logic_name, filepath)
         plugin = importlib.util.module_from_spec(plugin_spec)
         plugin_spec.loader.exec_module(plugin)
-        plugin.logic(meta)
+        plugin.logic(args, meta)
+
+def apply_set_values(args, meta):
+
+    info("Applying set")
+
+    for address, value in args.set:
+        property_names = address.split('.')
+        current = meta.value
+
+        try:
+            for property_name in property_names[:-1]:
+                if isinstance(current, list):
+                    idx = int(property_name)
+                else:
+                    idx = property_name
+
+                    if not idx in current:
+                        current[idx] = {}
+                    
+                current = current[idx]
+            
+            idx = property_names[-1]
+
+            if isinstance(current, list):
+                idx = int(idx)
+
+            current[idx] = value
+            
+        except ValueError:
+            warn(f"Invalid property '{address}', expected an integer at {property_name}")
+        except IndexError:
+            warn(f"Invalid property '{address}', index is out of range {property_name}")
 
 def main(*params):
     
@@ -667,10 +702,11 @@ def main(*params):
         warn(f"Folder meta does not exists - {args.meta}")
         meta = Meta({})
     
+    apply_set_values(args, meta)
     apply_logic_scripts(args, meta)
     
     if args.show_metadata:
-        print("METADATA:")
+        print("Metadata:")
         print(json.dumps(meta.value, indent=2))
     
     if args.show_parameters:
@@ -683,7 +719,6 @@ def main(*params):
     info("Executing actions")
     for name in args.do:
         globals()['do_' + name](args, inflater, meta)
-
 
     info("Bye!")
 

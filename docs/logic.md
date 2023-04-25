@@ -137,7 +137,7 @@ mell --new-logic add_missing_table_names
 The command above will generate a file named `<root>/style/logic/<timestamp>.add_missing_table_names.py`. The name `<timestamp>` will be replaced with a number containing the second since the Epoch that you executed this command. Add the following content to it.
 
 ```python
-def logic(meta):
+def logic(args, meta):
     for model_name, model_data in meta.models:
         if not "table_name" in model_data:
             model_data.table_name = model_name.lower() + 's'
@@ -220,7 +220,7 @@ mell --new-logic add_missing_column_ids
 And this will be its content.
 
 ```python
-def logic(meta):
+def logic(args, meta):
     for model_name, model in meta.models:
         for _, column in model.columns:
             type = column.type.value
@@ -311,7 +311,7 @@ Let's create the last rule now, it will be called `add_opposing_has_many_and_has
 This is its content. 
 
 ```python
-def logic(meta):
+def logic(args, meta):
     for model_name, model in meta.models:
         for column_name, column in model.columns:
             type = column.type.value
@@ -435,6 +435,10 @@ This code is not complicate, but you don't need to get into the details of what 
 
 ## Final considerations
 
-As you can see, we have extended the original metadata with the missing information we wanted. These are not any random information, but information that can be derived from the original metadata. Never forget that it is much more convenient to do it here than doing inferences inside the template files.
+As you can see, we have extended the original metadata with the missing information we wanted. However, there are many ways you can extend the metadata. These are a few ideas to keep your mind open:
 
-Another useful use for logic scripts is to validate the metadata. We could check for inconsistencies, print warnings, errors, or abort the program in such cases.
+* These are not any random information, but information that can be derived from the original metadata. Never forget that it is much more convenient to do it here than doing inferences inside the template files;
+* Another use for logic scripts is to validate the metadata. We could check for inconsistencies, print warnings, errors, or abort the program in such cases;
+* There is no limit to what you will run inside a logic script and how you will extend the metadata. For instance, you could use a Large Language Model to convert a metadata with use cases into a metadata with specific instructions to build a system. Or you could apply a genetic algorithm to optimize a hardware specification before saving its output;
+* The specification doesn't always need to be inside the metadata. You could have a filepath in the metadata referencing a binary file that you read with a library and save something in the metadata. For instance.
+

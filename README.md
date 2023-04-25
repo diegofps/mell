@@ -4,7 +4,7 @@ Mell is a Metaprogramming Logic Layer designed to generate anything from templat
 
 # Why do I need this?
 
-There are moments in life that you may find yourself needing to customize an entire project, not only an e-mail or a single webpage in a backend response. These are the moments that you may want to use mell. So far, I have used it in the following situations:
+Sometimes it is useful to render an entire project, not only an e-mail or a single webpage, like in a webserver response. This is when mell comes to help. So far, I have used it in the following situations:
 
 * Generating VHDL code for a static neural network, variating a few parameters. Mell is much more flexible than the generic atributes available in the language.
 * Generating model classes for an ORM. I defined the model classes and relations as metadata and asked mell to generate them for me in C#.
@@ -59,6 +59,14 @@ If you want to create a new project using this structure with the root folder na
 mell --new testing_mell
 ```
 
+# Important variables
+
+These are important variables available troughout mell. They help to interact with templates, metadata, and command arguments.
+
+* `meta: ` an object of type Meta that encapsulates the metadata allowing easy navigation through its fields. Use `.` to access attributes and `[]` to access array elements. Navigation always returns an object with its same type, a Meta object. To access the object it references you must use the attribute `value`. You can also iterate over this object, if it references a json object the iteration will return a tuple of type `(str, Meta)`. If you iterate over an array it will always return a `Meta` object.
+* `inflater: ` an object used to inflate templates in the asset folder. Use the method `inflate` to inflate a template. You may call this method from a template inside the template folder or from a template in the asset folder to render a partial template in the template being generated. You may also call it from a plugin script, in this case it makes sense to use the optional parameter `to_file`. This will save the rendered template to the corresponding file in the output folder.
+* `args: ` an object holding all the program parameters. `Program parameters` are attributes that control the program executing, like the folders it reads and writes data to, and so on. You should never change any of these values during the program execution.
+
 # How to install / uninstall it?
 
 ```shell
@@ -74,7 +82,7 @@ pip uninstall mell
 
 After installing the module you should be able to access the command `mell` via terminal. If it doesn't, you may try the following options: (1) check that your $PATH variable includes the local bin directory that pip uses; (2) install it in a virtual environment, like virtualenv; or (3) try to install it at the system level, running pip as root;
 
-# Generating Hello Worlds
+# Hands on: Generating Hello Worlds
 
 This will demonstrate how to use mell in a simple use case, changing the language for a static interface. You may be thinking now, "what a naive example, most web frameworks have much more powerful internationalization tools and I would never use it for that". Indeed, me neither. I used this in my resumes in latex, though. By doing this I had a different metadata for each place I would apply, some in portuguese, some in english, some specific for each position. Another benefit is that I could update the resume by changing only a single file. I could generate old ones again, they had their own metadata, and so on.
 
@@ -271,7 +279,7 @@ mell --do nothing --show-metadata data
 * [Metadata](https://github.com/diegofps/mell/blob/main/docs/metadata.md) - Explains how the metadata work and how to inherit and extend from existing metadata;
 * [Template](https://github.com/diegofps/mell/blob/main/docs/template.md) - Explains the template syntax and how to customize it;
 * [Plugin and Asset](https://github.com/diegofps/mell/blob/main/docs/plugin_and_asset.md) - Shows how to use a plugin script to generate multiple output files from a single template;
-* [Logic](https://github.com/diegofps/mell/blob/main/docs/logic.md) - Shows how to extend extend the input metadata, generating more metadata and preventing complex rules in template files.
+* [Logic](https://github.com/diegofps/mell/blob/main/docs/logic.md) - Shows how to extend the input metadata, generating more metadata and preventing complex rules in template files.
 
 # List of useful command options
 
@@ -292,6 +300,9 @@ mell --new-logic logic_name
 
 # Display the version number and exit
 mell --version
+
+# Special command to customize the metadata from command line - useful when an external scripts needs to change something
+mell --set message 'Hello World!' en
 
 # Display more info during execution (verbose mode)
 mell -v en
