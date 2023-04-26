@@ -34,7 +34,7 @@ Create a file in `<root>/style/plugin/example_plugin.py` with the following cont
 ```python
 def plugin(args, meta, inflater):
     for i, item in enumerate(meta.clients):
-        inflater.inflateAsset("letter.txt", item, to_file=f"examples/letter_{i}.txt")
+        inflater.inflate("letter.txt", item, to_file=f"examples/letter_{i}.txt")
 ```
 
 ## Create the metadata

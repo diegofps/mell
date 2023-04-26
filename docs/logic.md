@@ -13,7 +13,7 @@ Let's start by creating a project called database.
 
 ```shell
 mell --new database
-cv database
+cd database
 ```
 
 ## Create the metadata that we need to extend
@@ -305,7 +305,7 @@ If we execute `mell models --show-metadata --do nothing` now, we will obtain the
 Let's create the last rule now, it will be called `add_opposing_has_many_and_has_one`.
 
 ```shell
---new-logic add_opposing_has_many_and_has_one
+mell --new-logic add_opposing_has_many_and_has_one
 ```
 
 This is its content. 

@@ -372,27 +372,25 @@ def parse_args():
     return args
 
 
-def load_metadata(args, meta_filenames):
+def load_metadata(args, meta_parameters):
 
     meta = {}
 
-    if not meta_filenames:
-        return meta
+    for metadata_names in meta_parameters:
+        for metadata_name in metadata_names.split(','):
+            if not metadata_name:
+                continue
 
-    for metadata_name in meta_filenames[0].split(','):
-        if not metadata_name:
-            continue
-
-        filepath = os.path.join(args.meta, metadata_name) + ".json"
-        
-        with open(filepath, "r") as fin:
-            meta_parent = json.loads(fin.read())
+            filepath = os.path.join(args.meta, metadata_name) + ".json"
             
-            if "__parent__" in meta_parent:
-                meta_parent_2 = load_metadata(args, meta_parent["__parent__"])
-                meta_parent = update_dict_recursively(meta_parent_2, meta_parent)
-            
-            meta = update_dict_recursively(meta, meta_parent)
+            with open(filepath, "r") as fin:
+                meta_parent = json.loads(fin.read())
+                
+                if "__parent__" in meta_parent:
+                    meta_parent_2 = load_metadata(args, meta_parent["__parent__"].split())
+                    meta_parent = update_dict_recursively(meta_parent_2, meta_parent)
+                
+                meta = update_dict_recursively(meta, meta_parent)
     
     return meta
 
@@ -557,7 +555,7 @@ class Inflater:
 
         if to_file is not None:
 
-            filepath_out = os.path.join(self.args.generate, relpath)
+            filepath_out = os.path.join(self.args.generate, to_file)
             folderpath_out = os.path.dirname(filepath_out)
             
             os.makedirs(folderpath_out, exist_ok=True)

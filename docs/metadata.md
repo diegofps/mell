@@ -1,6 +1,13 @@
 # The metadata syntax
 
-Mell uses json to represent metadata. For instance, the following is a valid metadata file representing a letter. It may be located in `<root>/meta/letter_basic.json`.
+Mell uses json files to represent metadata. These files represent what we want to generate whereas the style folder represents how to render it. To create an example project, type the following.
+
+```shell
+mell --new metadata
+cdd metadata
+```
+
+Now, consider the following metadata file representing a letter. It may be located in `<root>/meta/letter_basic.json`.
 
 ```json
 {
@@ -16,7 +23,7 @@ Mell uses json to represent metadata. For instance, the following is a valid met
 }
 ```
 
-Currently, the only one reserved word we use is `__parent__`. It allows us to generate a new metadata based on a previous one. It works similarly to inheritance in object oriented languages. The following example, located in `<root>/meta/letter_beach.json`, shows an extension to the previous metadata that customizes the attributes first_paragraph, paragraphs, and last_paragraph.
+Currently, the only reserved word we have in a metadata file is `__parent__`. It allows us to generate a new metadata based on a previous one. It works similarly to inheritance in object oriented languages. The following example, located in `<root>/meta/letter_beach.json`, shows an extension to the previous metadata that customizes the attributes first_paragraph, paragraphs, and last_paragraph.
 
 ```json
 {
@@ -51,7 +58,6 @@ Subject: |= meta.subject =|
 |? endif ?|
 |= meta.ending =|
 |= meta.signature =|
-
 ```
 
 We may generate a letter with the first content, or the second content depending on the metadata we use. For instance, if we run `mell letter_basic` inside `<root>` we will generate the following content in the file `<root>/generate/letter.txt`:
@@ -88,4 +94,21 @@ Would you like me to invite a friend?
 
 Your friend,
 Bot
+```
+
+Alternatively, we could also drop the `__parent__` attribute from `letter_beach.json` and specify two `metadata` files during the command execution, separating their names with a comma. The syntax for this is show bellow.
+
+```shell
+# These two syntaxes have the same effect
+mell letter_basic,letter_beach
+mell letter_basic letter_beach
+```
+
+You may also inherit multiple base files in `__parent__`. If we add a third letter type, in `<root>/meta/letter_beach_night.json`, and we keep `letter_beach` without its `__parent__` attribute, the following syntax would combine both parent files.
+
+```json
+{
+    "__parent__": "letter_basic,letter_beach",
+    ...
+}
 ```
