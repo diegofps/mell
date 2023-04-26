@@ -25,17 +25,17 @@ You may constantly find that mell may be replaced by reflection or similar conce
 
 To use this library you must understand a few concepts. These are:
 
-* `metadata:` These is data describing what we want to generate. We use json format for it.
-* `style:` This is the set of features that are necessary to transform the metadata into something. It is composed by templates, assets, static files, plugins, and logic rules.
-* `generated folder:` This is where the rendered files will be saved and you must never change these files. However, you may want to execute or compile them if you are generating a webserver or a latex template, for instance. 
+* `metadata:` The data describing what we want to generate. It is written using the json format.
+* `style:` Set of scripts, templates, and assets that will transform the metadata into something else.
+* `generated folder:` This is where the rendered files will be saved. You must never change these files as they will be overwritten the next time you execute mell. 
 
-A style is composed of the following concepts:
+A style is composed of the following items:
 
 * `template:` file snippets with a few missing parts. Mell will fill these parts with metadata when it generates the files and copy them to the generated folder, keeping the original path structure.
 * `static:` files that will not be modified. Mell will copy them directly to the generated folder, keeping the original path structure.
 * `asset:` files used by your style that are not automatically used by mell.
-* `plugin:` Scripts that will be executed by mell. These usually access the files in the asset folder.
-* `logic:` Scripts that will be executed in order by mell. These are used to validate and extend the metadata.
+* `plugin:` Scripts that will be automatically executed by mell. These scripts will usually interact with the `inflater` variable to generate multiple output files. It may load template files from the asset folder.
+* `logic:` Scripts that will be automatically executed, in order, by mell. These are used to validate and extend the metadata.
 
 # Basic folder structure
 
@@ -43,23 +43,23 @@ The following table describes the folders used by mell.
 
 | Folder  | Description | 
 |-------------|-------------|
-| \<root\> | The base folder that contains all folders described here |
+| \<root\> | Base folder containing the folders meta, style, and the generated folder |
 | \<root\>/style | The base folder for template, static, plugin, and asset |
 | \<root\>/generate | this will hold the generated data, never edit this folder |
 | \<root\>/meta | holds all metadata as json files |
-| \<root\>/style/template | holds the template files that will be automatically rendered and written to the generated folder |
-| \<root\>/style/static | contains static files that will be copied as they are to the generate folder |
-| \<root\>/style/plugin | contains scripts that will be executed by mell. Use these to render multiple files from templates in the asset folder |
-| \<root\>/style/asset | contains template and other files that are not automatically used by mell. They may be used by plugins or other tools |
-| \<root\>/style/logic | contains scripts used automatically executed by mell to transform the metadata |
+| \<root\>/style/template | template files that will be automatically rendered and written to the generated folder |
+| \<root\>/style/static | static files that will be copied as they are to the output folder |
+| \<root\>/style/plugin | scripts that will be automatically executed by mell to render multiple output files |
+| \<root\>/style/asset | extra files that are not automatically used by mell. They may be used inside plugin and logic scripts |
+| \<root\>/style/logic | scripts automatically executed by mell to transform or extend the metadata |
 
-If you want to create a new project using this structure with the root folder named testing_mell, you can use the following command.
+To create a new project using the structure above, use the following command.
 
 ```shell
-mell --new testing_mell
+mell --new <name_of_root_folder>
 ```
 
-# Important variables
+# Context variables
 
 These are important variables available troughout mell. They help to interact with templates, metadata, and command arguments.
 
@@ -82,7 +82,7 @@ pip uninstall mell
 
 After installing the module you should be able to access the command `mell` via terminal. If it doesn't, you may try the following options: (1) check that your $PATH variable includes the local bin directory that pip uses; (2) install it in a virtual environment, like virtualenv; or (3) try to install it at the system level, running pip as root;
 
-# Hands on: Generating Hello Worlds
+# Generating Programs
 
 This will demonstrate how to use mell in a simple use case, changing the language for a static interface. You may be thinking now, "what a naive example, most web frameworks have much more powerful internationalization tools and I would never use it for that". Indeed, me neither. I used this in my resumes in latex, though. By doing this I had a different metadata for each place I would apply, some in portuguese, some in english, some specific for each position. Another benefit is that I could update the resume by changing only a single file. I could generate old ones again, they had their own metadata, and so on.
 
@@ -243,19 +243,19 @@ This is how the project looks like in the end.
             └── main.py
 ```
 
-# The Pipeline
+# Understanding the Pipeline
 
-Sometimes it is important to understand the order in which the operations are executed. The list below describe these operations in their standard order.
+It is important that you understand the order that operations are executed, as these may impact the availability of data throughout the execution. The list below shows the standard order.
 
 1. Load metadata
-1. Execute logic scripts
-1. Actions to generate the output:
+1. Run logic scripts
+1. Execute actions to generate the output:
 >4. Clean output folder [clean]
 >1. Copy static files [static]
 >1. Render templates and copy them to output [template]
->1. Execute plugin scripts [plugin]
+>1. Run plugin scripts [plugin]
 
-Loading the metadata and executing the logic scripts is always executed first and can't be changed. The list of actions to generate the output, though, can be modified or canceled. To modify the list of actions we use the command `--do <action_name>`. By default, mell will execute all of them but if we use the parameter `--do` it will execute only the tasks it received. A few examples are listed bellow.
+Loading the metadata and running the logic scripts is always executed first. You can't modify this behaviour. The list of actions to generate the output, though, can be modified or supressed. To modify it we must use the command `--do <action_name>`. By default, mell will execute all of them but if we use the parameter `--do` it will execute only the tasks it received. A few examples are listed bellow.
 
 ```shell
 # These two calls are the same
@@ -266,7 +266,7 @@ mell data
 mell --do template data
 
 # This will only clean the generated folder
-mell --do clean data
+mell --do clean
 
 # The word 'nothing' is a special keyword. It will not do any action but will still load the metadata and execute logic scripts. This is useful when used with -v (verose mode) or --show-metadata (display the metadata after executing the logic scripts).
 mell --do nothing data
@@ -301,8 +301,10 @@ mell --new-logic logic_name
 # Display the version number and exit
 mell --version
 
-# Special command to customize the metadata from command line - useful when an external scripts needs to change something
+# Use --set to customize the metadata from command line - useful when an external scripts needs to change something
 mell --set message 'Hello World!' en
+mell --set company.name 'Wespa' en
+mell --set users[2].name 'Diego Souza' en
 
 # Display more info during execution (verbose mode)
 mell -v en
@@ -334,5 +336,5 @@ mell --style styles/cpp --generate generates/cpp/pt pt
 
 # Source Code
 
-The source code is available [here](https://github.com/diegofps/mell)
+The source code is available in the project's [repository](https://github.com/diegofps/mell).
 

@@ -1,5 +1,5 @@
 name = "mell"
-version = "2.0.2"
+version = "2.0.3"
 author = "Diego Souza"
 author_email = "diegofpsouza+mell@gmail.com"
 url = "https://github.com/diegofps/mell"

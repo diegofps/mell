@@ -576,12 +576,15 @@ def do_clean(args, inflater, meta):
 
     if os.path.exists(args.generate):
         if os.path.isdir(args.generate):
-            shutil.rmtree(args.generate)
+            for filepath in glob.glob(os.path.join(args.generate, '*')):
+                debug("  Removing:", filepath)
+                if os.path.isdir(filepath):
+                    shutil.rmtree(filepath)
+                else:
+                    os.remove(filepath)
         else:
             os.remove(args.generate)
     
-    os.makedirs(args.generate, exist_ok=True)
-
 def do_static(args, inflater, meta):
 
     info("Copying static data")
@@ -642,7 +645,7 @@ def get_logic_files(args):
     filepaths.sort()
     return filepaths
 
-def apply_logic_scripts(args, meta):
+def do_logic_scripts(args, meta):
     
     info("Executing logic files")
     
@@ -658,7 +661,7 @@ def apply_logic_scripts(args, meta):
         plugin_spec.loader.exec_module(plugin)
         plugin.logic(args, meta)
 
-def apply_set_values(args, meta):
+def do_set_values(args, meta):
 
     info("Applying set")
     
@@ -727,35 +730,53 @@ def apply_set_values(args, meta):
         except IndexError:
             warn(f"Invalid property '{address}', index {idx} is out of range")
 
+def do_show_metadata(args, meta):
+
+    if args.show_metadata:
+        print("Metadata:")
+        print(json.dumps(meta.value, indent=2))
+
+def do_show_parameters(args):
+
+    if args.show_parameters:
+        print("Parameters:")
+        print(json.dumps(args.__dict__, indent=2))
+
+def do_action(name, args, inflater, meta):
+
+    globals()['do_' + name](args, inflater, meta)
+
+def do_load_meta(args):
+    if os.path.exists(args.meta):
+        return Meta(load_metadata(args, args.metadata))
+
+    if args.metadata:
+        error(f"Folder meta does not exist - {args.meta}")
+    
+    return Meta({})
+    
+def do_load_inflater(args):
+    return Inflater(args)
+
 def main(*params):
     
     args = parse_args()
 
     info("Loading the metadata")
-    if os.path.exists(args.meta):
-        meta = Meta(load_metadata(args, args.metadata))
+    meta = do_load_meta(args)
+    
+    do_set_values(args, meta)
+    do_logic_scripts(args, meta)
 
-    else:
-        warn(f"Folder meta does not exists - {args.meta}")
-        meta = Meta({})
-    
-    apply_set_values(args, meta)
-    apply_logic_scripts(args, meta)
-    
-    if args.show_metadata:
-        print("Metadata:")
-        print(json.dumps(meta.value, indent=2))
-    
-    if args.show_parameters:
-        print("Parameters:")
-        print(json.dumps(args.__dict__, indent=2))
+    do_show_metadata(args, meta)
+    do_show_parameters(args)
 
     info("Loading the inflater")
-    inflater = Inflater(args)
+    inflater = do_load_inflater(args)
 
     info("Executing actions")
     for name in args.do:
-        globals()['do_' + name](args, inflater, meta)
+        do_action(name, args, inflater, meta)
 
     info("Bye!")
 
