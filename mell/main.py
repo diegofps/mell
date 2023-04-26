@@ -15,7 +15,7 @@ import glob
 import time
 import sys
 import os
-
+import re
 
 LOG_LEVEL = 2
 
@@ -661,34 +661,71 @@ def apply_logic_scripts(args, meta):
 def apply_set_values(args, meta):
 
     info("Applying set")
+    
+    r = re.compile('\[(\d+)\]')
 
     for address, value in args.set:
         property_names = address.split('.')
+        property_names = [re.split(r, x) for x in property_names]
+        property_names = [x if i % 2 == 0 else int(x) for y in property_names for i,x in enumerate(y) if x]
+
         current = meta.value
 
         try:
-            for property_name in property_names[:-1]:
-                if isinstance(current, list):
-                    idx = int(property_name)
+            for i, idx in enumerate(property_names[:-1]):
+                if isinstance(idx, str):
+                    if isinstance(current, dict):
+                        if not idx in current:
+                            next_idx = property_names[i+1]
+                            current[idx] = [] if isinstance(next_idx, int) else {}
+                    elif isinstance(current, list):
+                        raise ValueError(f"expected an address, got the property name `.{idx}'")
+                    else:
+                        raise ValueError(f"expected nothing, got the property name `.{idx}'")
                 else:
-                    idx = property_name
-
-                    if not idx in current:
-                        current[idx] = {}
+                    if isinstance(current, list):
+                        if idx >= len(current):
+                            next_idx = property_names[i+1]
+                            if isinstance(next_idx, int):
+                                current += [[] for _ in range(idx + 1 - len(current))]
+                                current[idx] = []
+                            else:
+                                current += [{} for _ in range(idx + 1 - len(current))]
+                                current[idx] = {}
+                    elif isinstance(current, dict):
+                        raise ValueError(f"expected a property name, got the address [{idx}]")
+                    else:
+                        raise ValueError(f"expected nothing, got the address [{idx}]")
                     
                 current = current[idx]
             
             idx = property_names[-1]
 
-            if isinstance(current, list):
-                idx = int(idx)
-
-            current[idx] = value
+            if isinstance(idx, str):
+                if isinstance(current, dict):
+                    current[idx] = value
+                elif isinstance(current, list):
+                    raise ValueError(f"expected an address, got the property name `.{idx}'")
+                else:
+                    raise ValueError(f"expected nothing, got the property name `.{idx}'")
+            else:
+                if isinstance(current, list):
+                    if idx >= len(current):
+                        current += [None for _ in range(idx + 1 - len(current))]
+                    current[idx] = value
+                elif isinstance(current, dict):
+                    raise ValueError(f"expected a property name, got the address [{idx}]")
+                else:
+                    raise ValueError(f"expected nothing, got the address [{idx}]")
             
-        except ValueError:
-            warn(f"Invalid property '{address}', expected an integer at {property_name}")
+        except ValueError as e:
+            msg = str(e)
+            if msg:
+                warn(f"Invalid property '{address}' - {msg}")
+            else:
+                warn(f"Invalid property '{address}'")
         except IndexError:
-            warn(f"Invalid property '{address}', index is out of range {property_name}")
+            warn(f"Invalid property '{address}', index {idx} is out of range")
 
 def main(*params):
     
