@@ -52,13 +52,15 @@ def run_new_root(args):
 
 def run_new_style(args):
 
-    info("Creating a new style structure at", args.new_style)
+    folderpath = os.path.join(args.root, args.new_style)
+
+    info("Creating a new style structure at", folderpath)
     
-    if os.path.exists(args.new_style):
-        error(f"Can't create a style structure, a folder with this name already exists: {args.new_style}")
+    if os.path.exists(folderpath):
+        error(f"Can't create a style structure, a folder with this name already exists: {folderpath}")
         
-    for foldernames in ["asset", "template", "plugin", "static"]:
-        path = os.path.join(args.new_style, foldernames)
+    for foldernames in ["asset", "template", "plugin", "static", "logic"]:
+        path = os.path.join(folderpath, foldernames)
         info(f"  {path}")
         os.makedirs(path)
     
@@ -145,7 +147,7 @@ def parse_args():
     parser.add_argument('--root',
                         type=str,
                         metavar='PATH',
-                        default='.',
+                        default=None,
                         dest='root',
                         help="root folder that contains the folders style, meta, and generate [.]",
                         action='store')

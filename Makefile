@@ -19,3 +19,6 @@ getdeps:
 	python3 -m pip install --user --upgrade twine
 	keyring --disable
 
+test:
+	(pytest --rootdir tests)
+
