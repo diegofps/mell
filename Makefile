@@ -20,5 +20,5 @@ getdeps:
 	keyring --disable
 
 test:
-	(pytest --rootdir tests)
+	(pytest --rootdir tests --pdb)
 
