@@ -1,4 +1,4 @@
-# The metadata syntax
+# The metadata syntax <font size="5">📜</font>
 
 Mell uses json files to represent metadata. These files represent what we want to generate whereas the style folder represents how to render it. To create an example project, type the following.
 

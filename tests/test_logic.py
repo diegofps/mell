@@ -20,17 +20,32 @@ def test_logic():
         }
         """)
 
+    logic_name = 'add_email'
     logic_program = unindent(8, """
         def logic(args, meta):
             for user in meta.users:
                 user.email = user.name.value.lower() + "@company.com"
         """)
 
+    meta_name = 'users'
+    meta_data = unindent(8, """
+        {
+          "users": [
+            {
+              "name":"Diego"
+            },
+            {
+              "name":"Quelle"
+            }
+          ]
+        }
+        """)
+
     p = MellHelper('logic')
     p.create_project()
-    p.create_metadata('users', '{"users": [{"name":"Diego"},{"name":"Quelle"}]}')
-    p.create_logic('create_user', logic_program)
-    
+    p.create_metadata(meta_name, meta_data)
+    p.create_logic(logic_name, logic_program)
+
     status, stdout, stderr = p.exec(f'--root {p.root_path} --show-metadata users')
 
     assert status == 0

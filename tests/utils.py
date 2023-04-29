@@ -10,12 +10,12 @@ import os
 class MellHelper:
 
     def __init__(self, root_name):
-        
+
         self.cmd       = os.path.join('.'  , 'mell', 'main.py')
         self.root_path = os.path.join('tmp', root_name        )
 
         self.set_style('style')
-    
+
     def set_style(self, name):
 
         self.style_path    = os.path.join(self.root_path, name      )

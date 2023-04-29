@@ -1,5 +1,5 @@
 
-# The template syntax
+# The template syntax <font size="5">📰</font>
 
 Mell currently uses [jinja2](https://jinja.palletsprojects.com) to parse the templates, but we don't use the standard tokens as we also want to generate templates from our templates, like those used by classic web servers. The standard tokens also cause problems with latex scripts. The following table summarizes the tokens we use and a short description of them.
 
