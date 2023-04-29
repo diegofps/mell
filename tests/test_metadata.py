@@ -64,5 +64,3 @@ def test_metadata_set():
     assert stderr == ''
     assert stdout == expected_output
 
-
-
