@@ -63,7 +63,7 @@ mell --new test_project
 cd test_project
 ```
 
-Define the metadata in the file `meta/data.json`
+Define the metadata file in `meta/data.json`
 
 ```json
 {
@@ -79,13 +79,13 @@ for _ in range(|= meta.times =|):
     print("|= meta.phrase =|")
 ```
 
-Execute mell from the project folder passing the number of the metadata.
+Execute mell from the project folder passing the name of the metadata.
 
 ```shell
 mell data
 ```
 
-The following is the content of `generate/example.txt`.
+The following is the content of `generate/example.txt`, created by mell using the metadata we specified and the style folder in this project.
 
 ```python
 for _ in range(33):
