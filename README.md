@@ -54,6 +54,44 @@ pip uninstall mell
 
 After installing the module you should be able to access the command `mell` via terminal. If it doesn't, you may try the following options: (1) check that your `$PATH` variable includes the local bin folder, tipicaly `~/.local/bin`; (2) install it in a virtual environment, like `virtualenv`; or (3) try to install it at the system level, running pip as root (should not be necessary);
 
+# Basic Usage
+
+Create a project to hold your generator.
+
+```shell
+mell --new test_project
+cd test_project
+```
+
+Define the metadata in the file `meta/data.json`
+
+```json
+{
+    "phrase": "I am hungry!",
+    "times": 33
+}
+```
+
+Define a template file in `style/template/example.txt`
+
+```python
+for _ in range(|= meta.times =|):
+    print("|= meta.phrase =|")
+```
+
+Execute mell from the project folder passing the number of the metadata.
+
+```shell
+mell data
+```
+
+The following is the content of `generate/example.txt`.
+
+```python
+for _ in range(33):
+    print("I am hungry!")
+```
+
 # Documentation <font size="5">📚</font>
 
 ## Hands on
