@@ -1,47 +1,32 @@
 
-from utils import MellHelper
-
-import os
-
-def create_project(name, meta_name):
-    
-    p = MellHelper('load_metadata')
-
-    p.delete()
-
-    p.exec(f'--new {p.root_path}')
-
-    meta_data     = """{"user": {"name": "Diego Souza","age": 33, "backpack": ["book", "pen", "bottle", "phone", "camera"]}}"""
-    meta_filepath = os.path.join(p.meta_path, meta_name + '.json')
-
-    with open(meta_filepath, 'w') as fout:
-        fout.write(meta_data)
-    
-    return p
+from utils import MellHelper, unindent
 
 def test_load_metadata():
 
-    meta_name     = "data"
+    expected_output = unindent(8, """
+        Metadata:
+        {
+          "user": {
+            "name": "Diego Souza",
+            "age": 33,
+            "backpack": [
+              "book",
+              "pen",
+              "bottle",
+              "phone",
+              "camera"
+            ]
+          }
+        }
+        """)
 
-    p = create_project('load_metadata', meta_name)
+    meta_name = "data"
+
+    p = MellHelper('load_metadata')
+    p.create_project()
+    p.create_metadata(meta_name, '{"user": {"name": "Diego Souza","age": 33, "backpack": ["book", "pen", "bottle", "phone", "camera"]}}')
     
     status, stdout, stderr = p.exec(f'--root {p.root_path} --show-metadata {meta_name}')
-
-    expected_output = """Metadata:
-{
-  "user": {
-    "name": "Diego Souza",
-    "age": 33,
-    "backpack": [
-      "book",
-      "pen",
-      "bottle",
-      "phone",
-      "camera"
-    ]
-  }
-}
-"""
 
     assert status == 0
     assert stderr == ''
@@ -49,28 +34,31 @@ def test_load_metadata():
 
 def test_metadata_set():
 
+    expected_output = unindent(8, """
+        Metadata:
+        {
+          "user": {
+            "name": "Diego Souza",
+            "age": "18",
+            "backpack": [
+              "book",
+              "keys",
+              "bottle",
+              "phone",
+              "camera"
+            ]
+          },
+          "extra": "more"
+        }
+        """)
+
     meta_name = 'data'
 
-    p = create_project('metadata_set', meta_name)
-
+    p = MellHelper('metadata_set')
+    p.create_project()
+    p.create_metadata(meta_name, '{"user": {"name": "Diego Souza","age": 33, "backpack": ["book", "pen", "bottle", "phone", "camera"]}}')
+    
     status, stdout, stderr = p.exec(f'--root {p.root_path} --set "extra" "more" --set user.age 18 --set "user.backpack[1]" "keys" --show-metadata {meta_name}')
-
-    expected_output = """Metadata:
-{
-  "user": {
-    "name": "Diego Souza",
-    "age": "18",
-    "backpack": [
-      "book",
-      "keys",
-      "bottle",
-      "phone",
-      "camera"
-    ]
-  },
-  "extra": "more"
-}
-"""
 
     assert status == 0
     assert stderr == ''
