@@ -54,7 +54,7 @@ pip uninstall mell
 
 After installing the module you should be able to access the command `mell` via terminal. If it doesn't, you may try the following options: (1) check that your `$PATH` variable includes the local bin folder, tipicaly `~/.local/bin`; (2) install it in a virtual environment, like `virtualenv`; or (3) try to install it at the system level, running pip as root (should not be necessary);
 
-# Basic Usage
+# Basic Usage <font size="5">🐣</font>
 
 Create a project to hold your generator.
 
