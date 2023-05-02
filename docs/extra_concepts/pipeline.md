@@ -1,5 +1,5 @@
 
-# Understanding the Pipeline <font size="5">📑</font>
+# Understanding the Pipeline 📑
 
 It is important that you understand the order that operations are executed, as these may impact the availability of data throughout the execution. The list below shows the standard order.
 

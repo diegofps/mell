@@ -1,5 +1,5 @@
 
-# Generating Programs <font size="5"></font>
+# Generating Programs 🏗️
 
 This will demonstrate how to use mell to generate two programs, changing the language for a static interface. You may be thinking now, "what a naive example, most web frameworks have much more powerful internationalization tools and I would never use it for that". Indeed, me neither. I used this in my resumes in latex, though. By doing this I had a different metadata for each place I would apply, some in portuguese, some in english, some specific for each position. Another benefit is that I could update the resume by changing only a single file. I could generate old ones again, they had their own metadata, and so on.
 

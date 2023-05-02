@@ -1,5 +1,5 @@
 
-# Using the plugin and asset folders <font size="5">🔌</font>
+# Using the plugin and asset folders 🔌
 
 This example will use a metadata to generate a bunch of letters, each addressed to a different client. We will use a plugin because the number of clients is defined on a list inside the metadata. Therefore, we will use a single template file inside the asset folder and the plugin will generate multiple files in the output. A similar approach could be used to generate model classes for an ORM, for instance.
 

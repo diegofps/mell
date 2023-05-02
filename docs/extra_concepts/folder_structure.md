@@ -1,5 +1,5 @@
 
-# Basic Folder Structure <font size="5">📁</font>
+# Basic Folder Structure 📁
 
 The following table describes the folders used by mell.
 

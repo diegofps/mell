@@ -4,7 +4,7 @@ Mell is a tool designed to generate anything from template files and metadata fi
 
 [![Tests](https://github.com/diegofps/mell/actions/workflows/python-app.yml/badge.svg)](https://github.com/diegofps/mell/actions/workflows/python-app.yml)
 
-# When should I use Mell? <font size="5">⭐</font>
+# When should I use Mell? ⭐
 
 Sometimes it is useful to render an entire project, not only an e-mail or a single webpage, like in a webserver response. This is when mell comes to help. So far, I have used it in the following situations:
 
@@ -17,13 +17,13 @@ Conceptually, you may use mell in two directions. A metadata used with multiple 
 As an example, consider the situation that we have metadata describing a mobile app and a style that can render an Android app. We could change the metadata and generate different Android apps, or we could change the style and render the same app on different platforms, like an IOS app.
 
 
-# When should I not use Mell? <font size="5">🚫</font>
+# When should I not use Mell? 🚧
 
 I don't recommend using this if you are not confortable programming in the stack you are generating code to, as the template files may elevate your project complexity. This works better if are at a point where you feel like everything is just the same with a few different parameters. These few parameters will likely become your metadata when you use mell.
 
 You may constantly find that mell may be replaced by reflection or similar concepts on your programming language of choice. This is true and the answer to "which of them is better?" depends on your requirements. Mell may be more efficient as many logic rules are evaluated during rendering time, whereas reflection adds more complexity during the program execution. However, reflection is also simpler and more flexible during runtime. Mell is also more suitable to generate configuration files based on global parameters, like a kubernetes' configuration file or a django's settings.
 
-# Concepts <font size="5">📕</font>
+# Concepts 📕
 
 To use this library, you must understand at least the following concepts:
 
@@ -39,7 +39,7 @@ A style is composed of the following items:
 * `plugin:` Scripts that will be automatically executed by mell. These scripts will usually interact with the `inflater` variable to generate multiple output files. It may load template files from the asset folder.
 * `logic:` Scripts that will be automatically executed, in order, by mell. These are used to validate and extend the metadata.
 
-# How to install / uninstall it? <font size="5">🚀</font>
+# How to install / uninstall it? 🚀
 
 ```shell
 # To install
@@ -54,7 +54,7 @@ pip uninstall mell
 
 After installing the module you should be able to access the command `mell` via terminal. If it doesn't, you may try the following options: (1) check that your `$PATH` variable includes the local bin folder, tipicaly `~/.local/bin`; (2) install it in a virtual environment, like `virtualenv`; or (3) try to install it at the system level, running pip as root (should not be necessary);
 
-# Basic Usage <font size="5">🐣</font>
+# Basic Usage 🐣
 
 Create a project to hold your generator.
 
@@ -92,7 +92,7 @@ for _ in range(33):
     print("I am hungry!")
 ```
 
-# Documentation <font size="5">📚</font>
+# Documentation 📚
 
 ## Hands on
 
@@ -108,7 +108,7 @@ for _ in range(33):
 * [The variables args, meta, and inflater](https://github.com/diegofps/mell/blob/main/docs/extra_concepts/variables.md) - describes the role of the special variables.
 * [Understanding the Pipeline](https://github.com/diegofps/mell/blob/main/docs/extra_concepts/pipeline.md) - describes the order that mell processes everything.
 
-# TL;DR <font size="5">💻</font>
+# TL;DR 💻
 
 ```shell
 # This will create a folder named project_name with the recommended root folder structure
@@ -159,7 +159,7 @@ mell --style styles/cpp --generate generates/cpp/en en
 mell --style styles/cpp --generate generates/cpp/pt pt
 ```
 
-# Source Code <font size="5">🎼</font>
+# Source Code 🎼
 
 The source code is available in the project's [repository](https://github.com/diegofps/mell).
 

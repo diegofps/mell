@@ -1,5 +1,5 @@
 
-# The variables args, meta, and inflater <font size="5">📈</font>
+# The variables args, meta, and inflater 📈
 
 These are important variables available troughout mell. They help to interact with templates, metadata, and command arguments.
 
