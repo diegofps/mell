@@ -1,5 +1,5 @@
 
-# Using logic scripts to extend the metadata <font size="5">🤔</font>
+# Using logic scripts to extend the metadata 🤖
 
 It is a good practice to keep your template files as simple as possible. This means that we must execute most of our business logic somewhere else. Plugins are not good for this because they execute out of order and they are intended to generate output files. The recommended way to make inferences, extend, or clean the metadata is through logic scripts. Additionally, the metadata should only be modified inside logic scripts.
 
