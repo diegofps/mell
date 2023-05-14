@@ -22,15 +22,23 @@ Define the metadata file in `meta/data.json`
 ```json
 {
     "phrase": "I am hungry!",
-    "times": 33
+    "repeat": {
+        "times": 33
+    }
 }
 ```
 
 Define a template file in `style/template/example.txt`
 
 ```python
-for _ in range(|= meta.times =|):
+|? if meta.repeat.times < 5 ?|
+    |? for x in range(meta.repeat.times) ?|
+print("|= meta.phrase =|")
+    |? endfor ?|
+|? else ?|
+for _ in range(|= meta.repeat.times =|):
     print("|= meta.phrase =|")
+|? endif ?|
 ```
 
 Execute mell from the project folder passing the name of the metadata.
@@ -58,19 +66,19 @@ To use this library, you must understand at least the following concepts:
 
 A style is composed of the following items:
 
-* `template:` file snippets with a few missing parts. Mell will fill these parts with metadata when it generates the files and copy them to the generated folder, keeping the original path structure.
-* `static:` files that will not be modified. Mell will copy them directly to the generated folder, keeping the original path structure.
-* `asset:` files used by your style that are not automatically used by mell.
-* `plugin:` Scripts that will be automatically executed by mell. These scripts will usually interact with the `inflater` variable to generate multiple output files. It may load template files from the asset folder.
-* `logic:` Scripts that will be automatically executed, in order, by mell. These are used to validate and extend the metadata.
+* `templates:` file snippets with a few missing parts. Mell will fill these parts with metadata when it generates the files and copy them to the generated folder, keeping the original path structure.
+* `statics:` files that will not be modified. Mell will copy them directly to the generated folder, keeping the original path structure.
+* `assets:` files used by your style that are not automatically used by mell.
+* `generators:` Scripts that will be automatically executed by mell. These scripts will usually interact with the `inflater` variable to generate multiple output files. It may load template files from the asset folder.
+* `migrations:` Scripts that will be automatically executed, in order, by mell. These are used to validate and extend the metadata.
 
 ## Tutorials
 
 * [Generating Programs](https://github.com/diegofps/mell/blob/main/docs/hands_on/metadata.md) - Example showing the concept and how to generate 4 programs using 2 styles and 2 metadata files;
 * [Metadata](https://github.com/diegofps/mell/blob/main/docs/hands_on/metadata.md) - Explains how the metadata work and how to inherit and extend from existing metadata;
 * [Template](https://github.com/diegofps/mell/blob/main/docs/hands_on/template.md) - Explains the template syntax and how to customize it;
-* [Plugin and Asset](https://github.com/diegofps/mell/blob/main/docs/hands_on/plugin_and_asset.md) - Shows how to use a plugin script to generate multiple output files from a single template;
-* [Logic](https://github.com/diegofps/mell/blob/main/docs/hands_on/logic.md) - Shows how to extend the input metadata, generating more metadata and preventing complex rules in template files.
+* [Generators and Asset](https://github.com/diegofps/mell/blob/main/docs/hands_on/generators_and_assets.md) - Shows how to use a generator script to generate multiple output files from a single template;
+* [migrations](https://github.com/diegofps/mell/blob/main/docs/hands_on/migrations.md) - Shows how to extend the input metadata, generating more metadata and avoiding complex rules in template files.
 
 ## Extra concepts
 
@@ -88,11 +96,11 @@ mell --new project_name
 # This will create a folder named style2 with the recommended style folder structure (use it inside the root directory to keep things organized)
 mell --new-style project_name
 
-# Create a new plugin file as <root>/style/plugin/plugin_name.py
-mell --new-plugin plugin_name
+# Create a new generator file as <root>/style/generators/generator_name.py
+mell --new-generator generator_name
 
-# Create a new logic file as <root>/style/logic/<timestamp>.logic_name.py
-mell --new-logic logic_name
+# Create a new migration file as <root>/style/migrations/<timestamp>.migration_name.py
+mell --new-migration migration_name
 
 # Display the version number and exit
 mell --version
@@ -109,25 +117,25 @@ mell -v en
 mell -q en
 
 # Specify what we want to generate
-mell --do clean --do static --do template --do plugin en
+mell --do statics --do templates --do generators en
 
 # Only clean the output folder
-mell --do clean en
+mell --clean --do nothing
 
 # Only generate files from templates
-mell --do template en
+mell --do templates en
 
-# Specify a different style folder. This will make mell use the folders template, asset, plugin, and static that inside it.
+# Specify a different style folder. This will make mell use the folders templates, assets, generators, migrations, and statics that are inside this style.
 mell --style style2 en
 
-# Specify a different generate folder. This is useful if you have multiple styles and want to generate different things on different folders.
-mell --generate generate2 en
+# Specify a different output folder. This is useful if you have multiple styles and want to generate different things on different folders.
+mell --output output2 en
 
 # An example with custom style names, distinct output folders and two metadata files. We are assuming the style folders are on local directory and named python and cpp.
-mell --style styles/python --generate generates/python/en en
-mell --style styles/python --generate generates/python/pt pt
-mell --style styles/cpp --generate generates/cpp/en en
-mell --style styles/cpp --generate generates/cpp/pt pt
+mell --style styles/python --generate outputs/python/en en
+mell --style styles/python --generate outputs/python/pt pt
+mell --style styles/cpp --generate outputs/cpp/en en
+mell --style styles/cpp --generate outputs/cpp/pt pt
 ```
 
 # Source Code 🎼

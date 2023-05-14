@@ -2,7 +2,7 @@
 from utils import MellHelper, unindent
 
 
-def test_logic():
+def test_migrations():
 
     expected_output = unindent(8, """
         Metadata:
@@ -20,11 +20,11 @@ def test_logic():
         }
         """)
 
-    logic_name = 'add_email'
-    logic_program = unindent(8, """
-        def logic(args, meta):
+    migration_name = 'add_email'
+    migration_script = unindent(8, """
+        def migrate(args, meta):
             for user in meta.users:
-                user.email = user.name.value.lower() + "@company.com"
+                user.email = user.name.lower() + "@company.com"
         """)
 
     meta_name = 'users'
@@ -41,10 +41,10 @@ def test_logic():
         }
         """)
 
-    p = MellHelper('logic')
+    p = MellHelper('migrations')
     p.create_project()
     p.create_metadata(meta_name, meta_data)
-    p.create_logic(logic_name, logic_program)
+    p.create_migration(migration_name, migration_script)
 
     status, stdout, stderr = p.exec(f'--root {p.root_path} --show-metadata users')
 

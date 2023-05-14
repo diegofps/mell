@@ -1,11 +1,11 @@
 
-# Using logic scripts to extend the metadata 🤖
+# Using migration scripts to extend the metadata 🤖
 
-It is a good practice to keep your template files as simple as possible. This means that we must execute most of our business logic somewhere else. Plugins are not good for this because they execute out of order and they are intended to generate output files. The recommended way to make inferences, extend, or clean the metadata is through logic scripts. Additionally, the metadata should only be modified inside logic scripts.
+It is a good practice to keep your template files as simple as possible. This means that we must execute most of our business logic somewhere else. Plugins are not good for this because they execute out of order and they are intended to generate output files. The recommended way to make inferences, extend, or clean the metadata is through migration scripts. Additionally, the metadata should only be modified inside migration scripts.
 
-These scripts carry a number with their name. The lower the number, the earlier they will execute. Its file format is `<number>.<script_name>.py` and they are stored in `<root>/style/logic`. If you want to generate the number automatically you can use the command `mell --new-logic script_name`.
+These scripts carry a number with their name. The lower the number, the earlier they will execute. Its file format is `<number>.<script_name>.py` and they are stored in `<root>/style/migrations`. If you want to generate the number automatically you can use the command `mell --new-migration script_name`.
 
-This example will use logic scripts to generate models for a database. It is not supposed to be a complete example, but to demonstrate a few things we can do with it. 
+This example will use migration scripts to generate models for a database. It is not supposed to be a complete example, but to demonstrate a few things we can do with it. 
 
 ## Create the Project
 
@@ -50,7 +50,7 @@ Create a metadata with the following content in `<root>/meta/models.json`.
 }
 ```
 
-We can ask mell to parse this metadata and show it to us with the following command. The parameter `--show-metadata` will make it print the metadata after it had applied every logic script available. The parameter `--do nothing` is a command to prevent it from generating output in the output folder, we just want to check the metadata now.
+We can ask mell to parse this metadata and show it to us with the following command. The parameter `--show-metadata` will make it print the metadata after it had applied every migration script available. The parameter `--do nothing` is a command to prevent it from generating output in the output folder, we just want to check the metadata now.
 
 ```shell
 mell models --show-metadata --do nothing
@@ -120,7 +120,7 @@ This is the output that you should see.
 }
 ```
 
-These are a few issues in this metadata that we will try to fix using logic scripts. These are:
+These are a few issues in this metadata that we will try to fix using migration scripts. These are:
 
 * `Fix 1:` We must guarantee that every model definition has table_name
 * `Fix 2:` We must guarantee that column with types has_many and has_one will have the attribute column_id;
@@ -128,16 +128,16 @@ These are a few issues in this metadata that we will try to fix using logic scri
 
 ## Fix 1. Add missing table_names
 
-Let's execute the following command to create a logic script that will add the missing table_names.
+Let's execute the following command to create a migration script that will add the missing table_names.
 
 ```shell
-mell --new-logic add_missing_table_names
+mell --new-migration add_missing_table_names
 ```
 
-The command above will generate a file named `<root>/style/logic/<timestamp>.add_missing_table_names.py`. The name `<timestamp>` will be replaced with a number containing the second since the Epoch that you executed this command. Add the following content to it.
+The command above will generate a file named `<root>/style/migrations/<timestamp>.add_missing_table_names.py`. The name `<timestamp>` will be replaced with a number containing the second since the Epoch that you executed this command. Add the following content to it.
 
 ```python
-def logic(args, meta):
+def migrate(args, meta):
     for model_name, model_data in meta.models:
         if not "table_name" in model_data:
             model_data.table_name = model_name.lower() + 's'
@@ -214,13 +214,13 @@ The code above will iterate over the model names and, if the atribute `table_nam
 We will now create a script to add the missing column_ids.
 
 ```shell
-mell --new-logic add_missing_column_ids
+mell --new-migration add_missing_column_ids
 ```
 
 And this will be its content.
 
 ```python
-def logic(args, meta):
+def migrate(args, meta):
     for model_name, model in meta.models:
         for _, column in model.columns:
             type = column.type.value
@@ -305,13 +305,13 @@ If we execute `mell models --show-metadata --do nothing` now, we will obtain the
 Let's create the last rule now, it will be called `add_opposing_has_many_and_has_one`.
 
 ```shell
-mell --new-logic add_opposing_has_many_and_has_one
+mell --new-migrate add_opposing_has_many_and_has_one
 ```
 
 This is its content. 
 
 ```python
-def logic(args, meta):
+def migrate(args, meta):
     for model_name, model in meta.models:
         for column_name, column in model.columns:
             type = column.type.value
@@ -438,7 +438,7 @@ This code is not complicate, but you don't need to get into the details of what 
 As you can see, we have extended the original metadata with the missing information we wanted. However, there are many ways you can extend the metadata. These are a few ideas to keep your mind open:
 
 * These are not any random information, but information that can be derived from the original metadata. Never forget that it is much more convenient to do it here than doing inferences inside the template files;
-* Another use for logic scripts is to validate the metadata. We could check for inconsistencies, print warnings, errors, or abort the program in such cases;
-* There is no limit to what you will run inside a logic script and how you will extend the metadata. For instance, you could use a Large Language Model to convert a metadata with use cases into a metadata with specific instructions to build a system. Or you could apply a genetic algorithm to optimize a hardware specification before saving its output;
+* Another use for migration scripts is to validate the metadata. We could check for inconsistencies, print warnings, errors, or abort the program in such cases;
+* There is no limit to what you will run inside a migration script and how you will extend the metadata. For instance, you could use a Large Language Model to convert a metadata with use cases into a metadata with specific instructions to build a system. Or you could apply a genetic algorithm to optimize a hardware specification before saving its output;
 * The specification doesn't always need to be inside the metadata. You could have a filepath in the metadata referencing a binary file that you read with a library and save something in the metadata. For instance.
 
