@@ -15,35 +15,35 @@ def test_new_root():
 
     assert file_count(p.style_path   ) == 5
     assert file_count(p.meta_path    ) == 0
-    assert file_count(p.generate_path) == 0
+    assert file_count(p.output_path) == 0
 
-    assert file_count(p.template_path) == 0
-    assert file_count(p.asset_path   ) == 0
-    assert file_count(p.logic_path   ) == 0
-    assert file_count(p.plugin_path  ) == 0
-    assert file_count(p.static_path  ) == 0
+    assert file_count(p.templates_path) == 0
+    assert file_count(p.assets_path   ) == 0
+    assert file_count(p.migrations_path   ) == 0
+    assert file_count(p.generators_path  ) == 0
+    assert file_count(p.statics_path  ) == 0
 
-def test_new_plugin():
+def test_new_generator():
 
-    p = MellHelper("new_plugin")
-    name = 'new_plugin'
-
-    p.delete()
-    
-    assert p.exec(f'--new {p.root_path}')[0] == 0
-    assert p.exec(f'--style {p.style_path} --new-plugin {name}')[0] == 0
-    assert file_count(p.plugin_path) == 1
-
-def test_new_logic():
-    
-    p = MellHelper("new_logic")
-    name = 'new_logic'
+    p = MellHelper("new_generator")
+    name = 'new_generator'
 
     p.delete()
     
     assert p.exec(f'--new {p.root_path}')[0] == 0
-    assert p.exec(f'--style {p.style_path} --new-logic {name}')[0] == 0
-    assert file_count(p.logic_path) == 1
+    assert p.exec(f'--style {p.style_path} --new-generator {name}')[0] == 0
+    assert file_count(p.generators_path) == 1
+
+def test_new_migration():
+    
+    p = MellHelper("new_migration")
+    name = 'new_migration'
+
+    p.delete()
+    
+    assert p.exec(f'--new {p.root_path}')[0] == 0
+    assert p.exec(f'--style {p.style_path} --new-migration {name}')[0] == 0
+    assert file_count(p.migrations_path) == 1
 
 def test_new_style():
 
@@ -57,15 +57,15 @@ def test_new_style():
 
     p.set_style(name)
     
-    assert file_count(p.root_path    ) == 4
+    assert file_count(p.root_path) == 4
 
-    assert file_count(p.style_path   ) == 5
-    assert file_count(p.meta_path    ) == 0
-    assert file_count(p.generate_path) == 0
+    assert file_count(p.style_path ) == 5
+    assert file_count(p.meta_path  ) == 0
+    assert file_count(p.output_path) == 0
 
-    assert file_count(p.template_path) == 0
-    assert file_count(p.asset_path   ) == 0
-    assert file_count(p.logic_path   ) == 0
-    assert file_count(p.plugin_path  ) == 0
-    assert file_count(p.static_path  ) == 0
+    assert file_count(p.templates_path ) == 0
+    assert file_count(p.assets_path    ) == 0
+    assert file_count(p.migrations_path) == 0
+    assert file_count(p.generators_path) == 0
+    assert file_count(p.statics_path   ) == 0
 

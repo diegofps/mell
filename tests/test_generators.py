@@ -1,6 +1,7 @@
 from utils import MellHelper, unindent
 
-def test_plugin():
+
+def test_generators():
 
     metaname = 'data'
 
@@ -30,8 +31,8 @@ def test_plugin():
         Project '|= meta.name =|' will last |= meta.duration_in_months =| month(s) and cost USD |= meta.cost_in_usd =|.
         """)
     
-    plugin_program = unindent(8, """
-        def plugin(args, meta, inflater):
+    generator_script = unindent(8, """
+        def generate(args, meta, inflater):
             for i, project in enumerate(meta.projects):
                 inflater.inflate('project.txt', project, to_file=f'project_{i}.txt')
         """)
@@ -48,7 +49,7 @@ def test_plugin():
     p = MellHelper("plugin")
     p.create_project()
     p.create_metadata(metaname, metadata)
-    p.create_plugin('projects', plugin_program)
+    p.create_generator('projects', generator_script)
     p.create_asset('project.txt', asset_template)
     status, stdout, stderr = p.exec(f'--root {p.root_path} {metaname}')
 
@@ -56,6 +57,6 @@ def test_plugin():
     assert stderr == ''
     assert stdout == ''
 
-    assert p.read_generated_file('project_0.txt') == project_0
-    assert p.read_generated_file('project_1.txt') == project_1
-    assert p.read_generated_file('project_2.txt') == project_2
+    assert p.read_output_file('project_0.txt') == project_0
+    assert p.read_output_file('project_1.txt') == project_1
+    assert p.read_output_file('project_2.txt') == project_2

@@ -58,14 +58,14 @@ int main()
 
 ## Step 4. Generating the programs
 
-If we only pass the metadata name to mell, it will use the default folders for style and generate folder. The following program will use the metadata file `<root>/meta/en.json`, the style folder `<root>/style`, and render everything to `<root>/generate`.
+If we only pass the metadata name to mell, it will use the default folders for style and output folder. The following program will use the metadata file `<root>/meta/en.json`, the style folder `<root>/style`, and render everything to `<root>/output`.
 
 ```shell
 # This must be executed inside the <root> folder
 mell en
 ```
 
-The command above will generate the following content in `<root>/generate/main.py`
+The command above will generate the following content in `<root>/output/main.py`
 
 ```shell
 print("Hello World")
@@ -84,7 +84,7 @@ To generate the cpp program we need to tell mell to use the style in style2. Thi
 mell --style style2 en
 ```
 
-The command above will generate the following content in `<root>/generate/main.cpp`
+The command above will generate the following content in `<root>/output/main.cpp`
 
 ```cpp
 #include <iostream>
@@ -108,9 +108,9 @@ int main()
 }
 ```
 
-## Step 5. Improving the structure
+## Step 5. Improving the folder structure
 
-If you pretend to use just one style, the default folder name is fine, but for multiple style it is better to rename and put them into something more representative, like `styles/cpp` and `styles/python`. You may also want to save the output to different output folders. You can do this using the parameter `--generate`. The following is an example of all four combinations using the new style structure.
+If you pretend to use just one style, the default folder name is fine, but for multiple style it is better to rename and put them into something more representative, like `styles/cpp` and `styles/python`. You may also want to save the output to different output folders. You can do this using the parameter `--output`. The following is an example of all four combinations using the new style structure.
 
 ```shell
 # Create new folders to keep our styles
@@ -121,17 +121,17 @@ mv style styles/python
 mv style2 styles/cpp
 
 # Generate the programs and save them in different folders
-mell --style styles/cpp --generate generates/cpp/en en
-mell --style styles/cpp --generate generates/cpp/pt pt
-mell --style styles/python --generate generates/python/en en
-mell --style styles/python --generate generates/python/pt pt
+mell --style styles/cpp --output outputs/cpp/en en
+mell --style styles/cpp --output outputs/cpp/pt pt
+mell --style styles/python --output outputs/python/en en
+mell --style styles/python --output outputs/python/pt pt
 ```
 
 This is how the project looks like in the end.
 
 ```
 .
-├── generates
+├── outputs
 │   ├── cpp
 │   │   ├── en
 │   │   │   └── main.cpp
@@ -147,17 +147,17 @@ This is how the project looks like in the end.
 │   └── pt.json
 └── styles
     ├── cpp
-    │   ├── asset
-    │   ├── logic
-    │   ├── plugin
-    │   ├── static
-    │   └── template
+    │   ├── assets
+    │   ├── generators
+    │   ├── migrations
+    │   ├── statics
+    │   └── templates
     │       └── main.cpp
     └── python
-        ├── asset
-        ├── logic
-        ├── plugin
-        ├── static
-        └── template
+    │   ├── assets
+    │   ├── generators
+    │   ├── migrations
+    │   ├── statics
+    │   └── templates
             └── main.py
 ```

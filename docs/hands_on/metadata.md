@@ -60,7 +60,7 @@ Subject: |= meta.subject =|
 |= meta.signature =|
 ```
 
-We may generate a letter with the first content, or the second content depending on the metadata we use. For instance, if we run `mell letter_basic` inside `<root>` we will generate the following content in the file `<root>/generate/letter.txt`:
+We may generate a letter with the first content, or the second content depending on the metadata we use. For instance, if we run `mell letter_basic` inside `<root>` we will generate the following content in the file `<root>/output/letter.txt`:
 
 ```
 To: Juliana <juliana@gmail.com>

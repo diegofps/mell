@@ -1,15 +1,15 @@
 
-# Using the plugin and asset folders 🔌
+# Using generators and assets 🔌
 
-This example will use a metadata to generate a bunch of letters, each addressed to a different client. We will use a plugin because the number of clients is defined on a list inside the metadata. Therefore, we will use a single template file inside the asset folder and the plugin will generate multiple files in the output. A similar approach could be used to generate model classes for an ORM, for instance.
+This example will use a metadata to generate a bunch of letters, each addressed to a different client. We will use a generator because the number of clients is defined on a list inside the metadata. Therefore, we will use a single template file inside the asset folder and the generator will create multiple files in the output folder. A similar approach could be used to generate model classes for an ORM, for instance.
 
 ## Create the project
 
 Create a new mell project and enter it.
 
 ```shell
-mell --new plugin_test
-cd plugin_test
+mell --new generator_test
+cd generator_test
 ```
 
 ## Create the asset
@@ -27,12 +27,12 @@ Best Regards,
 Bot
 ```
 
-## Create the plugin
+## Create the generator
 
-Create a file in `<root>/style/plugin/example_plugin.py` with the following content. 
+Create a file in `<root>/style/generators/example_generator.py` with the following content. 
 
 ```python
-def plugin(args, meta, inflater):
+def generate(args, meta, inflater):
     for i, item in enumerate(meta.clients):
         inflater.inflate("letter.txt", item, to_file=f"examples/letter_{i}.txt")
 ```
@@ -66,7 +66,7 @@ Create a file in `<root>/meta/data.json` with the following content.
 }
 ```
 
-## Execute the plugin
+## Execute the generator
 
 Now, inside the `<root>` folder, execute the following command:
 
@@ -74,7 +74,7 @@ Now, inside the `<root>` folder, execute the following command:
 mell data
 ```
 
-Three files will be generated in `<root>/generate/examples`, `letter_0.txt` to `letter_2.txt`, containing the following contents.
+Three files will be generated in `<root>/output/examples`, `letter_0.txt` to `letter_2.txt`, containing the following contents.
 
 ```
 Dear Diego,

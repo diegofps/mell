@@ -17,6 +17,7 @@ import sys
 import os
 import re
 
+
 LOG_LEVEL = 2
 
 def debug(*args):
@@ -43,7 +44,7 @@ def run_new_root(args):
     if os.path.exists(args.new_root):
         error(f"Can't create a root structure, a folder with this name already exists: {args.new_root}")
         
-    for foldernames in [("style", "asset"), ("style", "template"), ("style", "plugin"), ("style", "static"), ("style", "logic"), ("meta",), ("generate",)]:
+    for foldernames in [("style", "assets"), ("style", "templates"), ("style", "generators"), ("style", "statics"), ("style", "migrations"), ("meta",), ("output",)]:
         path = os.path.join(args.new_root, *foldernames)
         info(f"  {path}")
         os.makedirs(path)
@@ -59,46 +60,46 @@ def run_new_style(args):
     if os.path.exists(folderpath):
         error(f"Can't create a style structure, a folder with this name already exists: {folderpath}")
         
-    for foldernames in ["asset", "template", "plugin", "static", "logic"]:
+    for foldernames in ["assets", "templates", "generators", "statics", "migrations"]:
         path = os.path.join(folderpath, foldernames)
         info(f"  {path}")
         os.makedirs(path)
     
     sys.exit(0)
 
-def run_new_plugin(args):
+def run_new_generator(args):
 
-    filepath = os.path.join(args.plugin, f"{args.new_plugin}.py")
-    info("Creating a new plugin script")
+    filepath = os.path.join(args.generators, f"{args.new_generator}.py")
+    info("Creating a new generator script")
     
     if os.path.exists(filepath):
-        error("Can't create the plugin. A plugin with this name already exists at", filepath)
+        error("Can't create the generator. A file with this name already exists at", filepath)
     
     info(f"  {filepath}")
     dirname = os.path.dirname(filepath)
     os.makedirs(dirname, exist_ok=True)
 
     with open(filepath, 'w') as fout:
-        fout.write("def plugin(args, meta, inflator):\n    pass\n\n")
+        fout.write("def generate(args, meta, inflator):\n    pass\n\n")
     
     sys.exit(0)
 
-def run_new_logic(args):
+def run_new_migration(args):
 
-    info("Creating a new logic script")
+    info("Creating a new migration script")
     
     timestamp = int(time.time())
-    filepath = os.path.join(args.logic, f"{timestamp}.{args.new_logic}.py")
+    filepath = os.path.join(args.migrations, f"{timestamp}.{args.new_migration}.py")
 
     if os.path.exists(filepath):
-        error("Can't create the plugin. A plugin with this name already exists at", filepath)
+        error("Can't create migration. A file with this name already exists at", filepath)
     
     info(f"  {filepath}")
     dirname = os.path.dirname(filepath)
     os.makedirs(dirname, exist_ok=True)
 
     with open(filepath, 'w') as fout:
-        fout.write("def logic(args, meta):\n    pass\n\n")
+        fout.write("def migrate(args, meta):\n    pass\n\n")
     
     sys.exit(0)
 
@@ -130,18 +131,18 @@ def parse_args():
 
     parser.add_argument('--set',
                         default=[],
-                        nargs=2,
+                        nargs='*',
                         dest='set',
-                        help="customize the value of individual properties in the metadata",
+                        help="customize the value of individual properties in the metadata (before migrations)",
                         action='append')
 
     parser.add_argument('--do',
                         type=str,
                         metavar='NAME',
                         default=None,
-                        choices=['nothing', 'clean', 'static', 'template', 'plugin'],
+                        choices=['nothing', 'statics', 'templates', 'generators'],
                         dest='do',
-                        help="define one or more action to be executed [nothing, clean, static, template, plugin]",
+                        help="define one or more action to be executed [nothing, statics, templates, generators]",
                         action='append')
 
     parser.add_argument('--root',
@@ -157,47 +158,47 @@ def parse_args():
                         metavar='PATH',
                         default=None,
                         dest='style',
-                        help="style folder that contains asset, template, plugin, and static [<root>/style]",
+                        help="style folder containing assets, templates, generators, migrations, and statics [<root>/style]",
                         action='store')
 
-    parser.add_argument('--template',
+    parser.add_argument('--templates',
                         type=str,
                         metavar='PATH',
                         default=None,
-                        dest='template',
+                        dest='templates',
                         help="folder to read the template files [<style>/template]",
                         action='store')
 
-    parser.add_argument('--static',
+    parser.add_argument('--statics',
                         type=str,
                         metavar='PATH',
                         default=None,
-                        dest='static',
+                        dest='statics',
                         help="folder to read the static files [<style>/static]",
                         action='store')
 
-    parser.add_argument('--plugin',
+    parser.add_argument('--generators',
                         type=str,
                         metavar='PATH',
                         default=None,
-                        dest='plugin',
-                        help="folder to read the plugins [<style>/plugin]",
+                        dest='generators',
+                        help="folder to read the generators [<style>/generators]",
                         action='store')
 
-    parser.add_argument('--asset',
+    parser.add_argument('--assets',
                         type=str,
                         metavar='PATH',
                         default=None,
-                        dest='asset',
-                        help="folder holding the asset files [<style>/asset]",
+                        dest='assets',
+                        help="folder holding the asset files [<style>/assets]",
                         action='store')
 
-    parser.add_argument('--logic',
+    parser.add_argument('--migrations',
                         type=str,
                         metavar='PATH',
                         default=None,
-                        dest='logic',
-                        help="folder holding the logic files [<style>/logic]",
+                        dest='migrations',
+                        help="folder holding the migration files [<style>/migrations]",
                         action='store')
 
     parser.add_argument('--meta',
@@ -208,18 +209,18 @@ def parse_args():
                         help="folder to read the metadata files [<root>/meta]",
                         action='store')
 
-    parser.add_argument('--generate',
+    parser.add_argument('--output',
                         type=str,
                         metavar='PATH',
                         default=None,
                         dest=None,
-                        help="folder to generate the output files [<root>/generate]",
+                        help="folder to generate the output files [<root>/output]",
                         action='store')
 
     parser.add_argument('-M', '--show-metadata',
                         default=False,
                         dest='show_metadata',
-                        help="display the metadata, after execution of the logic scripts",
+                        help="display the metadata, after executing the migration scripts",
                         action='store_true')
 
     parser.add_argument('-P', '--show-parameter',
@@ -244,21 +245,26 @@ def parse_args():
                         help="create a new style folder using the recommended structure",
                         action='store')
     
-    parser.add_argument('--new-plugin',
+    parser.add_argument('--new-generator',
                         type=str,
                         metavar='NAME',
                         default=None,
-                        dest="new_plugin",
-                        help="create a new plugin script using the name provided",
+                        dest="new_generator",
+                        help="create a new generator script using the name provided",
                         action='store')
     
-    parser.add_argument('--new-logic',
+    parser.add_argument('--new-migration',
                         type=str,
                         metavar='NAME',
                         default=None,
-                        dest="new_logic",
-                        help="create a new logic script using the name provided",
+                        dest="new_migration",
+                        help="create a new migration script using the name provided",
                         action='store')
+    
+    parser.add_argument('--clean',
+                        dest="clean",
+                        help="clean the output folder before generating the files",
+                        action='store_true')
     
     parser.add_argument('--version',
                         action='version', 
@@ -317,8 +323,8 @@ def parse_args():
     if args.root is None:
         args.root = '.'
 
-    if args.generate is None:
-        args.generate = os.path.join(args.root, 'generate')
+    if args.output is None:
+        args.output = os.path.join(args.root, 'output')
 
     if args.meta is None:
         args.meta = os.path.join(args.root, 'meta')
@@ -326,23 +332,23 @@ def parse_args():
     if args.style is None:
         args.style = os.path.join(args.root, 'style')
 
-    if args.static is None:
-        args.static = os.path.join(args.style, 'static')
+    if args.statics is None:
+        args.statics = os.path.join(args.style, 'statics')
 
-    if args.template is None:
-        args.template = os.path.join(args.style, 'template')
+    if args.templates is None:
+        args.templates = os.path.join(args.style, 'templates')
 
-    if args.plugin is None:
-        args.plugin = os.path.join(args.style, 'plugin')
+    if args.generators is None:
+        args.generators = os.path.join(args.style, 'generators')
 
-    if args.asset is None:
-        args.asset = os.path.join(args.style, 'asset')
+    if args.assets is None:
+        args.assets = os.path.join(args.style, 'assets')
 
-    if args.logic is None:
-        args.logic = os.path.join(args.style, 'logic')
+    if args.migrations is None:
+        args.migrations = os.path.join(args.style, 'migrations')
 
     if args.do is None:
-        args.do = ['clean', 'static', 'template', 'plugin']
+        args.do = ['statics', 'templates', 'generators']
 
     global LOG_LEVEL
     
@@ -361,11 +367,11 @@ def parse_args():
     if args.new_style:
         run_new_style(args)
 
-    if args.new_plugin:
-        run_new_plugin(args)
+    if args.new_generator:
+        run_new_generator(args)
 
-    if args.new_logic:
-        run_new_logic(args)
+    if args.new_migration:
+        run_new_migration(args)
 
     if args.metadata is None:
         parser.print_help()
@@ -433,7 +439,6 @@ class MetaIterator:
 class Meta:
 
     def __init__(self, value):
-
         self.__dict__['value'] = value
     
     def __iter__(self):
@@ -470,7 +475,8 @@ class Meta:
         if v is None:
             return Meta(None)
         elif index in v:
-            return Meta(v[index])
+            child_value = v[index]
+            return Meta(child_value) if isinstance(child_value, (list, dict)) else child_value
         else:
             return Meta(None)
     
@@ -518,8 +524,8 @@ class Inflater:
 
     def __init__(self, args):
         self.args = args
-        self.template_env = self._create_env(args.template)
-        self.asset_env = self._create_env(args.asset)
+        self.template_env = self._create_env(args.templates)
+        self.asset_env = self._create_env(args.assets)
     
     def _create_env(self, folderpath):
         if not os.path.exists(folderpath):
@@ -557,7 +563,7 @@ class Inflater:
 
         if to_file is not None:
 
-            filepath_out = os.path.join(self.args.generate, to_file)
+            filepath_out = os.path.join(self.args.output, to_file)
             folderpath_out = os.path.dirname(filepath_out)
             
             os.makedirs(folderpath_out, exist_ok=True)
@@ -567,71 +573,74 @@ class Inflater:
 
         return text
         
-def do_nothing(args, inflater, meta):
+def do_action_nothing(args, inflater, meta):
     pass
 
-def do_clean(args, inflater, meta):
+def do_clean(args):
 
-    info("Cleaning generate directory")
+    if not args.clean:
+        return
 
-    if os.path.exists(args.generate):
-        if os.path.isdir(args.generate):
-            for filepath in glob.glob(os.path.join(args.generate, '*')):
+    info("Cleaning output directory")
+
+    if os.path.exists(args.output):
+        if os.path.isdir(args.output):
+            for filepath in glob.glob(os.path.join(args.output, '*')):
                 debug("  Removing:", filepath)
                 if os.path.isdir(filepath):
                     shutil.rmtree(filepath)
                 else:
                     os.remove(filepath)
         else:
-            os.remove(args.generate)
+            os.remove(args.output)
     
-def do_static(args, inflater, meta):
+def do_action_statics(args, inflater, meta):
 
     info("Copying static data")
 
-    for filepath in glob.glob(os.path.join(args.static, '**'), recursive=True):
+    for filepath in glob.glob(os.path.join(args.statics, '**'), recursive=True):
         if os.path.isfile(filepath):
-            relpath = os.path.relpath(filepath, args.static)
-            filepath_out = os.path.join(args.generate, relpath)
+            relpath = os.path.relpath(filepath, args.statics)
+            filepath_out = os.path.join(args.output, relpath)
             debug(f"{filepath} -> {filepath_out}")
 
             folderpath_out = os.path.dirname(filepath_out)
             os.makedirs(folderpath_out, exist_ok=True)
             shutil.copy2(filepath, filepath_out)
 
-def do_template(args, inflater:Inflater, meta:Meta):
+def do_action_templates(args, inflater:Inflater, meta:Meta):
 
     info("Generating template based files")
 
-    for filepath in glob.glob(os.path.join(args.template, "**"), recursive=True):
+    for filepath in glob.glob(os.path.join(args.templates, "**"), recursive=True):
         if os.path.isfile(filepath):
-            relpath = os.path.relpath(filepath, args.template)
+            relpath = os.path.relpath(filepath, args.templates)
             debug("  ", relpath)
 
             inflater.inflate(relpath, meta, to_file=relpath, from_asset=False)
 
 
-def do_plugin(args, inflater, meta):
+def do_action_generators(args, inflater, meta):
     
-    info("Executing plugin files")
+    info("Executing generator files")
 
-    rootpath = os.path.dirname(args.plugin)
+    rootpath = os.path.dirname(args.generators)
 
-    for filepath in glob.glob(os.path.join(args.plugin, '**', '*.py'), recursive=True):
+    for filepath in glob.glob(os.path.join(args.generators, '*.py'), recursive=True):
         if os.path.isfile(filepath):
-            plugin_name = os.path.relpath(filepath, rootpath).replace('\\', '.').replace('/', '.')
+            generator_name = os.path.relpath(filepath, rootpath).replace('\\', '.').replace('/', '.')
             debug("  ", filepath)
             
-            plugin_spec = importlib.util.spec_from_file_location(plugin_name, filepath)
-            plugin = importlib.util.module_from_spec(plugin_spec)
-            plugin_spec.loader.exec_module(plugin)
-            plugin.plugin(args, meta, inflater)
+            generator_spec = importlib.util.spec_from_file_location(generator_name, filepath)
+            generator = importlib.util.module_from_spec(generator_spec)
+            generator_spec.loader.exec_module(generator)
+            generator.generate(args, meta, inflater)
 
-def get_logic_files(args):
+def get_sorted_script_files(folderpath):
 
     filepaths = []
 
-    for filepath in glob.glob(os.path.join(args.logic, '**', '*.py'), recursive=True):
+    for filepath in glob.glob(os.path.join(folderpath, '*.py'), recursive=True):
         if os.path.isfile(filepath):
             filename = os.path.basename(filepath)
             cells = filename.split('.', 1)
@@ -645,21 +654,21 @@ def get_logic_files(args):
     filepaths.sort()
     return filepaths
 
-def do_logic_scripts(args, meta):
+def do_migrations(args, meta):
     
-    info("Executing logic files")
+    info("Executing migration files")
     
-    rootpath = os.path.dirname(args.logic)
-    filepaths = get_logic_files(args)
+    rootpath = os.path.dirname(args.migrations)
+    filepaths = get_sorted_script_files(args.migrations)
     
     for _, filepath in filepaths:
-        logic_name = os.path.relpath(filepath, rootpath).replace('\\', '.').replace('/', '.')
-        debug("  ", filepath)
+        migration_name = os.path.relpath(filepath, rootpath).replace('\\', '.').replace('/', '.')
+        debug("  Applying migration ", filepath)
         
-        plugin_spec = importlib.util.spec_from_file_location(logic_name, filepath)
-        plugin = importlib.util.module_from_spec(plugin_spec)
-        plugin_spec.loader.exec_module(plugin)
-        plugin.logic(args, meta)
+        migration_spec = importlib.util.spec_from_file_location(migration_name, filepath)
+        migration = importlib.util.module_from_spec(migration_spec)
+        migration_spec.loader.exec_module(migration)
+        migration.migrate(args, meta)
 
 def do_set_values(args, meta):
 
@@ -667,7 +676,21 @@ def do_set_values(args, meta):
     
     r = re.compile('\[(\d+)\]')
 
-    for address, value in args.set:
+    value_types = {
+        'str':str, 
+        'int': int, 
+        'float': float, 
+        'bytes':bytes, 
+        'bool':bool
+    }
+
+    for set in args.set:
+
+        value_type = str if len(set) < 3 else value_types[set[2]]
+
+        address = set[0]
+        value = value_type(set[1])
+
         property_names = address.split('.')
         property_names = [re.split(r, x) for x in property_names]
         property_names = [x if i % 2 == 0 else int(x) for y in property_names for i,x in enumerate(y) if x]
@@ -744,7 +767,7 @@ def do_show_parameters(args):
 
 def do_action(name, args, inflater, meta):
 
-    globals()['do_' + name](args, inflater, meta)
+    globals()['do_action_' + name](args, inflater, meta)
 
 def do_load_meta(args):
     if os.path.exists(args.meta):
@@ -766,7 +789,7 @@ def main(*params):
     meta = do_load_meta(args)
     
     do_set_values(args, meta)
-    do_logic_scripts(args, meta)
+    do_migrations(args, meta)
 
     do_show_metadata(args, meta)
     do_show_parameters(args)
@@ -775,6 +798,7 @@ def main(*params):
     inflater = do_load_inflater(args)
 
     info("Executing actions")
+    do_clean(args)
     for name in args.do:
         do_action(name, args, inflater, meta)
 
