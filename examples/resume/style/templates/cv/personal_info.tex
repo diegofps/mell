@@ -1,0 +1,90 @@
+
+%-------------------------------------------------------------------------------
+%	PERSONAL INFORMATION
+%	Comment any of the lines below if they are not required
+%-------------------------------------------------------------------------------
+% Available options: circle|rectangle,edge/noedge,left/right
+% \photo[circle,noedge,left]{./examples/profile}
+
+|? if meta.general.title.__len__() >= 2 ?|
+\name{|= meta.general.title[0] =|}{|= meta.general.title[1] =|}
+|? else ?|
+\nameTo{|= meta.general.name =|}{|= meta.general.company =|}
+|? endif ?|
+
+\position{
+|? if meta.general.roles ?|
+    \colorizeB\incColorB |= meta.general.roles[0] =|\color{black}
+|? endif ?|
+|? for i in range(1, meta.general.roles.__len__()) ?|
+    {\enskip\cdotp\enskip}
+    \colorizeB\incColorB |= meta.general.roles[i] =|\color{black}
+|? endfor ?|
+}
+
+\address{|= meta.general.location =|{\enskip\cdotp\enskip}|= meta.general.languages =|}
+
+|? if meta.general.mobile ?|
+\mobile{|= meta.general.mobile =|}
+|? endif ?|
+
+|? if meta.general.email ?|
+\email{|= meta.general.email =|}
+|? endif ?|
+
+|? if meta.general.github ?|
+\github{|= meta.general.github =|}
+|? endif ?|
+
+|? if meta.general.portfolio ?|
+\portfolio{|= meta.general.portfolio =|}
+|? endif ?|
+
+|? if meta.general.linkedin ?|
+\linkedin{|= meta.general.linkedin =|}
+|? endif ?|
+
+|? if meta.general.dockerhub ?|
+\dockerhub{|= meta.general.dockerhub =|}
+|? endif ?|
+
+|? if meta.general.gitlab ?|
+\gitlab{|= meta.general.gitlab =|}
+|? endif ?|
+
+|? if meta.general.stackoverflow ?|
+\stackoverflow{|= meta.general.stackoverflow =|}
+|? endif ?|
+
+|? if meta.general.twitter ?|
+\twitter{|= meta.general.twitter =|}
+|? endif ?|
+
+|? if meta.general.skype ?|
+\skype{|= meta.general.skype =|}
+|? endif ?|
+
+|? if meta.general.reddit ?|
+\reddit{|= meta.general.reddit =|}
+|? endif ?|
+
+|? if meta.general.medium ?|
+\medium{|= meta.general.medium =|}
+|? endif ?|
+
+|? if meta.general.googlescholar.id ?|
+|? if meta.general.googlescholar.name ?|
+\googlescholar{|= meta.general.googlescholar.id =|}{|= meta.general.googlescholar.name =|}
+|? else ?|
+\googlescholar{|= meta.general.googlescholar.id =|}{}
+|? endif ?|
+|? endif ?|
+
+|? if meta.general.extrainfo ?|
+\extrainfo{|= meta.general.extrainfo =|}
+|? endif ?|
+
+|? if meta.general.quote ?|
+\quote{``|= meta.general.quote =|"}
+|? endif ?|
+

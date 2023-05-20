@@ -1,0 +1,228 @@
+{
+    "__parent__": "en",
+
+    "general": {
+        "roles": ["Engenheiro de Software e IA", "Pesquisador", "Empreendedor"],
+        "location": "Rio de Janeiro, Brasil",
+        "languages": "Português / Inglês",
+        "babel": "portuguese",
+        "color": "msRed"
+    },
+
+    "formats": {
+        "portfolio": "Portfólio",
+        "to": "para",
+        "resume_name": "CV",
+        "cover_letter_name": "Carta de Apresentação"
+    },
+
+    "summary": {
+        "title": "Sumário",
+        "text": [
+            "Eu pesquiso e desenvolvo sistemas baseados em Inteligência Artificial.",
+            "Fundador de uma startup, Mestrado em Inteligência Artificial e Bacharel em Ciência da Computação.",
+            "Meus interesses técnicos são IA/ML, Computação Distribuída, Computação de Borda, Ciência de Dados, Empreendedorismo, Startups e Inovação.",
+            "O que me motiva é poder resolver problemas complexos com IA, inovar com responsabilidade e contribuir para a construção de um mundo melhor de maneira inteligente."
+        ]
+    },
+
+    "experience": {
+        "title": "Experiência",
+        "items": [
+            {
+                "role": "Startup \\acvPositionSep Engenheiro de Software e IA",
+                "description": [
+                    "Startup construida a partir de um Sistema de Localização Interna baseado em aprendizado de máquina e sinais de Wi-Fi desenvolvido em parceria com um laboratório de pesquisas;",
+                    "e prestadora de serviços focada em Sistemas baseados em Inteligência Artificial."
+                ],
+                "date": "Mai. 2016 - Presente",
+                "location": "Brasil \\acvPositionSep Itália \\acvPositionSep USA",
+                "projects": [
+                    {
+                        "location": "Brasil",
+                        "description": [
+                            "A Gold Energy precisava de ajuda para capturar dados oficiais da reserva nacional de energia para usar em seus modelos de previsão.",
+                            "Construí bibliotecas para baixá-los, ler e escrever em formatos customizados, integrar com Pandas e Notebooks, visualizá-los e analisá-los."
+                        ],
+                        "impact": [
+                            "O produto final permitiu a atualização dos dados em uma frequência diária, sem sobrecarregar os servidores oficiais.",
+                            "As ferramentas agora são utilizadas por seus bots, desenvolvedores e cientistas de dados."
+                        ]
+                    },
+                    {
+                        "location": "Brasil",
+                        "description": [
+                            "Seu proprietário entrou em contato comigo com uma ideia para conectar armazéns e vendedores independentes de drop-shipping.",
+                            "Propus e coordenei o desenvolvimento de uma plataforma para gestão de compras, controle de estoque, envios, integração com marketplaces, pré‐venda e pós‐venda." 
+                        ],
+                        "impact": [
+                            "O projeto evoluiu para um projeto de valor mínimo (MVP) e atualmente se tornou uma startup."
+                        ]
+                    },
+                    {
+                        "location": "USA, Remoto",
+                        "description": [
+                            "A empresa, uma fabricante de SSDs empresariais de alta capacidade com processamento interno e sede na California, USA, precisava de ajudar para encontrar aplicações para seu produto, composto por servidores com vários SSDs inteligentes customizados.",
+                            "Desenvolvi múltiplos algoritmos de visão computacional distribuídos, aprendizagem federada, microsserviços, aplicativos web para demonstrar usos e ferramentas para automatizar configurações.",
+                            "Também avaliamos um acelerador Verilog, soluções para processamento em batch e stream, e publicamos APIs com algoritmos de Aprendizado de Máquina."
+                            
+                        ],
+                        "impact": [
+                            "Identificamos problemas no produto e MVPs foram utilizados para mostrar aplicações para clientes, ajudando-os a fecharem contratos."
+                        ]
+                    },
+                    {
+                        "location": "Brasil",
+                        "description": [
+                            "Um de seus laboratórios desenvolveu um Sistema de Localização Interna e precisava de ajuda para explorar opções comerciais e aprimorá-la.",
+                            "Atuando como parceiro comercial, criei a startup, coordenei e desenvolvi a tecnologia e suas aplicações até um produto mínimo."
+                        ],
+                        "impact": [
+                            "Fomos selecionados para uma incubadora de empresas, para o programa Swissnex AIT, o apresentamos a investidores internacionais, clientes e utilizamos recursos para desenvolver novos recursos."
+                        ]
+                    },
+                    {
+                        "location": "Brasil",
+                        "description": [
+                            "A INOVAX precisava de ajuda em um projeto com muitos subcontratados e seus processos.",
+                            "Atuei como desenvolvedor de software full stack e os ajudei a construir um site para validar o fluxo de documentos desses subcontratados, passando pela INOVAX, até seu cliente final."
+                        ],
+                        "impact": [
+                            "O projeto melhorou sua eficiência, validando muitos erros comuns a nível do subcontratado, antes mesmo de chegarem à INOVAX."
+                        ]
+                    },
+                    {
+                        "location": "Itália, Brasil, USA",
+                        "description": [
+                            "A empresa desenvolveu um sistema para rastrear, identificar e realizar manutenções planejadas de rotina para uma empresa multinacional de energia.",
+                            "Traduzi esse sistema para a lingua portuguêsa, aprendi a usá-lo e treinei operadores.",
+                            "Para isso, realizamos viagens e interações com colaboradores na Itália, Brasil e Estados Unidos."
+                        ],
+                        "impact": [
+                            "Os operadores foram capacitados a utilizar o sistema e o projeto foi implantado em usinas hidrelétricas pela América."
+                        ]
+                    }
+                ]
+            },
+            {
+                "role": "Estágio",
+                "description": [
+                    "A empresa tinha um ramo de pessoas da Engenharia de Processos e precisava de ajuda para validar os aspectos técnicos de suas propostas.", 
+                    "Participei de reuniões com clientes, auxiliando-os com perspectivas tecnológicas e levantamento de requisitos.", 
+                    "Mais tarde, migrei para seu ramo de desenvolvimento, atuando como engenheiro de software full stack, scrum master e engenheiro de testes." 
+                ],
+                "impact": [
+                    "Juntos, concluímos dois projetos para um grande cliente do setor mineral brasileiro e um projeto para uma startup parceira."
+                ],
+                "location": "Brasil"
+            }
+        ]
+    },
+
+    "education": {
+        "title": "Education",
+        "items": [
+            {
+                "title": "\\link{https://cos.ufrj.br/index.php/pt-BR/publicacoes-pesquisa/details/15/2564}{Mestre em Engenharia de Sistemas e Computação}",
+                "location": "Rio de Janeiro, Brasil"
+            },
+            {
+                "title": "Bacharel em Ciência da Computação",
+                "location": "Rio de Janeiro, Brasil"
+            }
+        ]
+    },
+
+    "awards": {
+        "title": "Prêmios e Concessões",
+        "items": [
+            {
+                "title": "Startup encubada",
+                "description": "Incubadora de Empresas da COPPE",
+                "location": "Brasil"
+            },
+            {
+                "title": "Startup selecionada",
+                "description": "Swissnex Academia-Industry Training",
+                "location": "Brasil \\& Suíça"
+            },
+            {
+                "title": "1\\textsuperscript{o} lugar",
+                "description": "Chamada para Professor Substituto",
+                "location": "Brasil"
+            },
+            {
+                "title": "3\\textsuperscript{o} lugar",
+                "location": "Brasil"
+            },
+            {
+                "title": "Bolsa de Pesquisa",
+                "description": "Pesquisa de uma Rede Neural para Sistemas de Posicionamento Interno (\\link{https://www.gov.br/cnpq/pt-br}{CNPq})",
+                "location": "Brasil"
+            }
+        ]
+    },
+
+    "publications": {
+        "title": "Publicações",
+        "items": [
+            {
+                "date": "Out. 2020"
+            },
+            {
+                "date": "Mai. 2019"
+            },
+            {
+                "date": "Jan. 2016"
+            },
+            {
+                "date": "Dez. 2015"
+            },
+            {
+                "date": "Jul. 2015"
+            },
+            {
+                "date": "Out. 2014"
+            },
+            {
+                "date": "Abr. 2014"
+            },
+            {
+                "date": "Set. 2013"
+            }
+        ]
+    },
+
+    "personal_projects": {
+        "title": "Projetos Pessoais",
+        "items": [
+            {
+                "description": "Programa para gerar códigos, documentos e projetos a partir de metadados e modelos."
+            },
+            {
+                "description": "Programa para realizar buscas de hiperparametros com apenas um comando."
+            },
+            {
+                "description": "Biblioteca com implementações de redes neurais artificiais sem peso."
+            },
+            {
+                "description": "Gateway para interceptar e transformar eventos de um sistema Linux."
+            },
+            {
+                "description": "Aplicativo para consultar o menu do restaurante universitário - 4000 usuários."
+            },
+            {
+                "description": "Aplicativo para ocultar, organizar e salvar notificações do Android."
+            },
+            {
+                "description": "Calculadora Android com um teclado de gestos."
+            }
+        ]
+    },
+
+    "references": {
+        "title": "Referências",
+        "text": "As referências serão fornecidas mediante solicitação."
+    }
+
+}
