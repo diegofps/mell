@@ -62,7 +62,7 @@ To use this library, you must understand at least the following concepts:
 
 * `metadata:` The data describing what we want to generate. It is written using the json format.
 * `style:` Set of scripts, templates, and assets that will transform the metadata into something else.
-* `generated folder:` This is where the rendered files will be saved. You must never change these files as they will be overwritten the next time you execute mell. 
+* `output folder:` This is where the rendered files will be saved. You must not change these files as they will be overwritten the next time you execute mell. 
 
 A style is composed of the following items:
 
@@ -122,7 +122,7 @@ mell --do statics --do templates --do generators en
 # Only clean the output folder
 mell --clean --do nothing
 
-# Only generate files from templates
+# Only generate files from the templates folder
 mell --do templates en
 
 # Specify a different style folder. This will make mell use the folders templates, assets, generators, migrations, and statics that are inside this style.
@@ -132,10 +132,10 @@ mell --style style2 en
 mell --output output2 en
 
 # An example with custom style names, distinct output folders and two metadata files. We are assuming the style folders are on local directory and named python and cpp.
-mell --style styles/python --generate outputs/python/en en
-mell --style styles/python --generate outputs/python/pt pt
-mell --style styles/cpp --generate outputs/cpp/en en
-mell --style styles/cpp --generate outputs/cpp/pt pt
+mell --style styles/python --output outputs/python/en en
+mell --style styles/python --output outputs/python/pt pt
+mell --style styles/cpp --output outputs/cpp/en en
+mell --style styles/cpp --output outputs/cpp/pt pt
 ```
 
 # Source Code 🎼

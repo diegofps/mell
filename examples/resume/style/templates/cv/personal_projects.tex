@@ -1,0 +1,23 @@
+%-------------------------------------------------------------------------------
+%	SECTION TITLE
+%-------------------------------------------------------------------------------
+\cvsection{|= meta.personal_projects.title =| \large{\faGamepad}}
+
+
+
+%-------------------------------------------------------------------------------
+%	CONTENT
+%-------------------------------------------------------------------------------
+
+\begin{cvhonors}
+
+|? for item in meta.personal_projects.items ?|
+  %---------------------------------------------------------
+  \cvhonor
+    {\link{|= item.url =|}{|= item.title =|}} % Title
+    {|= item.description =|} % Description
+    {|= item.publisher =|} % Publisher
+    {|= item.languages =|} % Languages
+
+|? endfor ?|
+\end{cvhonors}

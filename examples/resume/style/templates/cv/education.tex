@@ -1,0 +1,23 @@
+%-------------------------------------------------------------------------------
+%	SECTION TITLE
+%-------------------------------------------------------------------------------
+% \tr{\cvsection{Education}}{\cvsection{Educação}}
+\cvsection{|= meta.education.title =|}
+
+
+%-------------------------------------------------------------------------------
+%	CONTENT
+%-------------------------------------------------------------------------------
+
+\begin{cvhonors}
+
+|? for item in meta.education.items ?|
+  %---------------------------------------------------------
+  \cvhonor
+    {|= item.title =|} % Award
+    {|= item.university =|} % Event
+    {|= item.location =|} % Location
+    {|= item.date =|} % Date(s)
+|? endfor ?|
+
+\end{cvhonors}

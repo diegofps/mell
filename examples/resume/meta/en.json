@@ -1,0 +1,399 @@
+{
+    "general": {
+        "name": "Diego Souza",
+        "company": "Wespa",
+        "color": "msBlue",
+        "babel": "",
+        "title": ["Diego", "Souza"],
+
+        "roles": [
+            "Software and AI Engineer",
+            "Researcher",
+            "Entrepreneur"
+        ],
+        "location": "Rio de Janeiro, Brazil",
+        "languages": "Portuguese / English",
+        "mobile": "+55 (21) 97283-9381",
+        "email": "diegofpsouza@gmail.com",
+        "github": "diegofps",
+        "portfolio": "wespa.com.br/index.html",
+        "linkedin": "diego-souza-a314ab27",
+        "dockerhub": "diegofpsouza",
+        
+        "gitlab": "",
+        "stackoverflow": "",
+        "twitter": "",
+        "skype": "",
+        "reddit": "",
+        "medium": "",
+        "googlescholar": { "id": "", "name": "" },
+        "extrainfo": "",
+        "quote": ""
+    },
+
+    "examples": [
+        {
+            "key": "nome",
+            "value": "Diego"
+        },
+        {
+            "key": "idade",
+            "value": "33"
+        },
+        {
+            "key": "sexo",
+            "value": "Masculino"
+        },
+        {
+            "key": "estado civil",
+            "value": "Solteiro"
+        }
+    ],
+
+    "formats": {
+        "portfolio": "Portfolio",
+        "to": "to",
+        "resume_name": "Resume",
+        "cover_letter_name": "Cover Letter"
+    },
+
+    "summary": {
+        "title": "Summary",
+        "text": [
+            "I research and develop Artificial Intelligence (AI) based systems.",
+            "Founder of a startup, Master's degree in Artificial Intelligence, and Bachelor's degree in Computer Science.",
+            "My technical interests are Artificial Intelligence, Distributed Computing, Edge Computing, Optimization, Data Science, Computer Vision, Entrepreneurship, Hardware Acceleration, Leadership, Startups, and Innovation.",
+            "What motivates me is solving complex problems with AI, innovate responsibly and contribute to building a better world in an intelligent way."
+        ]
+    },
+
+    "experience": {
+        "title": "Experience",
+        "items": [
+            {
+                "company": "Wespa Intelligent Systems",
+                "role": "Startup \\acvPositionSep Software and AI Engineer",
+                "description": [
+                    "Startup built from an Indoor Positioning System based on Machine Learning and Wi-Fi signals developed in partnership with a research lab;",
+                    "and a service provider focused on Artificial Intelligence based Systems."
+                ],
+                "url": "https://wespa.com.br/index.html",
+                "date": "May. 2016 - Present",
+                "location": "Brazil \\acvPositionSep Italy \\acvPositionSep USA",
+                "projects": [
+                    {
+                        "company": "Gold Energia",
+                        "role": "",
+                        "date": "2022",
+                        "location": "Brazil",
+                        "url": "https://www.goldenergia.com.br/",
+                        "description": [
+                            "Gold Energy needed help capturing official data from the national energy reserve to use in their prediction models.", 
+                            "I built libraries to download them, read and write in custom formats, integrate with Pandas and Notebooks, and visualize and analyze them."
+                        ],
+                        "impact": [
+                            "The final product allowed updating data on a daily basis, without overloading the official servers.", 
+                            "The tools are now used by their bots, developers, and data scientists."
+                        ]
+                    },
+                    {
+                        "company": "Loja do Pão Duro",
+                        "role": "",
+                        "date": "2019 - 2020",
+                        "location": "Brazil",
+                        "url": "https://www.lojadopaoduro.com/",
+                        "description": [
+                            "Its owner contacted me with an idea to connect warehouses and independent drop-shipping sellers.",
+                            "I proposed and coordinated the development of a platform to handle purchasing, inventory control, dispatching, integration with marketplaces, pre‐sales, and post‐sales."
+                        ],
+                        "impact": [
+                            "The project evolved into a minimum value project (MVP) and has now become a startup."
+                        ]
+                    },
+                    {
+                        "company": "NGD Systems",
+                        "role": "",
+                        "date": "2017 - 2022",
+                        "location": "USA, Remote",
+                        "url": "https://twitter.com/ngdsystems?lang=en",
+                        "description": [
+                            "The company, a manufacturer of high-capacity enterprise SSDs with internal processing located in California, USA, needed help to find applications for their product, composed of servers with multiple intelligent SSDs.",
+                            "I developed multiple distributed computer vision algorithms, federated learning, microservices, web apps to demonstrate uses, and tools to automatized configurations.",
+                            "We also evaluated a Verilog accelerator, batch and stream processing solutions, and deployed APIs with Machine Learning algorithms."
+                        ],
+                        "impact": [
+                            "We identified issues in the platform and MVPs were used to show use cases to clients, helping them close contracts."
+                        ]
+                    },
+                    {
+                        "company": "COPPETEC",
+                        "role": "",
+                        "date": "2017 - 2018",
+                        "location": "Brazil",
+                        "url": "",
+                        "description": [
+                            "One of its research laboratories developed an Indoor Positioning System and needed help exploring commercial options and improve it.",
+                            "Acting as a commercial partner, I created the startup, coordinated and developed the technology and its applications until a minimum product."
+                        ],
+                        "impact": [
+                            "We were selected for a business incubator, for the Swissnex AIT program, introduced it to international investors, clients and used resources to develop new features."
+                        ]
+                    },
+                    {
+                        "company": "INOVAX",
+                        "role": "",
+                        "date": "2016 - 2017",
+                        "location": "Brazil",
+                        "url": "http://inovax.com.br/",
+                        "description": [
+                            "INOVAX needed help on a project with many subcontractors and its processes.",
+                            "I acted as a full stack software developer and helped them build a website to validate the flow of documents from these subcontractors, through INOVAX, to its final client."
+                        ],
+                        "impact": [
+                            "The project improved its efficiency, validating many errors at the subcontractor level before even reaching INOVAX."
+                        ]
+                    },
+                    {
+                        "company": "Neatec S.p.A.",
+                        "role": "",
+                        "date": "2015 - 2017",
+                        "location": "Italy, Brazil, USA",
+                        "url": "https://www.neatec.it/en/",
+                        "description": [
+                            "The company developed a system for a multinational energy provider to track, identify and perform routinely planned maintenance.",
+                            "I translated this system into Portuguese, learned how to use it, and trained operators.",
+                            "To this end, we travelled and interacted with employees in Italy, Brazil and the United States."
+                        ],
+                        "impact": [
+                            "The operators were capacitated to use the system, and the project was rolled out to hydroelectric plants across America."
+                        ]
+                    }
+                ]
+            },
+            {
+                "company": "ELO Group",
+                "role": "Intern",
+                "description": [
+                    "The company had a branch of people from Process Engineering and needed help validating the technical aspects of their proposals.", 
+                    "I participated in meetings with clients, helped them with technological perspectives, and gathering requirements.",
+                    "I later migrated to their development branch, performing as a full stack software engineer, scrum master, and test engineer."
+                ],
+                "impact": [
+                    "Together, we completed two projects for a major client from the Brazillian mineral sector and one project for a startup partner."
+                ],
+                "url": "https://elogroup.com.br/",
+                "date": "2010 - 2012",
+                "location": "Brazil",
+                "projects": []
+            }
+        ]
+    },
+
+    "education": {
+        "title": "Education",
+        "items": [
+            {
+                "title": "\\link{https://cos.ufrj.br/index.php/pt-BR/publicacoes-pesquisa/details/15/2564}{MSc in Systems and Computer Engineering}",
+                "university": "\\link{https://www.coppe.ufrj.br/}{COPPE}, \\link{https://ufrj.br/}{Universidade Federal do Rio de Janeiro}",
+                "location": "Rio de Janeiro, Brazil",
+                "date": "2013 - 2015"
+            },
+            {
+                "title": "BSc in Computer Science",
+                "university": "\\link{https://ufrj.br/}{Universidade Federal do Rio de Janeiro}",
+                "location": "Rio de Janeiro, Brazil",
+                "date": "2008 - 2012"
+            }
+        ]
+    },
+
+    "awards": {
+        "title": "Awards and Grants",
+        "items": [
+            {
+                "title": "Incubated Startup",
+                "description": "COPPE's Business Incubator",
+                "location": "Brazil",
+                "date": "2017 - 2021",
+                "url": "https://incubadora.coppe.ufrj.br/"
+            },
+            {
+                "title": "Startup selected",
+                "description": "Swissnex Academia-Industry Training",
+                "location": "Brazil \\& Switzerland",
+                "date": "2016",
+                "url": "https://swissnex.org/brazil/our-work/startups/academia-industry-training/"
+            },
+            {
+                "title": "1st place",
+                "description": "Call for substitute professor",
+                "location": "Brazil",
+                "date": "2016",
+                "url": "https://ufrj.br/"
+            },
+            {
+                "title": "3rd place",
+                "description": "BRICS-CCI \\& CBIC - IEEE, CISW",
+                "location": "Brazil",
+                "date": "2013",
+                "url": ""
+            },
+            {
+                "title": "Research Grant",
+                "description": "Research of a Weightless Neural Network for Indoor Positioning Systems (\\link{https://www.gov.br/cnpq/pt-br}{CNPq})",
+                "location": "Brazil",
+                "date": "2013",
+                "url": ""
+            }
+        ]
+    },
+
+    "skills": {
+        "title": "Skills",
+        "items": [
+            {
+                "title": "Programming",
+                "items": "Python, C/\\textsc{C++}, Java, Shell, SQL, \\LaTeX, Javascript, Ruby, \\textsc{C\\#}, Matlab."
+            },
+            {
+                "title": "Scientific",
+                "items": "Scikit Learn, Matplotlib, Numpy, Pandas, OpenCV, Weightless Neural Networks, MPICH, Jupyter, Google Colab."
+            },
+            {
+                "title": "Web",
+                "items": "Django, VUE, Ruby on Rails, .NET Framework, .NET Core, Flask, MongoDB, Postgres, MySQL."
+            },
+            {
+                "title": "Mobile",
+                "items": "Android SDK, Android NDK, MVVM, Google Jetpack, Arduino."
+            },
+            {
+                "title": "Cloud",
+                "items": "Nginx, Docker, Kubernetes, K3S Rancher, Helm, AWS, Spark, Kafka, RabbitMQ, MQTT, Locust, Linux."
+            },
+            {
+                "title": "Management",
+                "items": "Project Management, Business Modelling, Pitch Presentation, Requirements Gathering, UI Prototyping, Jira, ClickUp."
+            },
+            {
+                "title": "Test",
+                "items": "Locust, Cucumber, Cxxtest, Valgrind, Pytest, JUnit."
+            }
+        ]
+    },
+
+    "publications": {
+        "title": "Publications",
+        "items": [
+            {
+                "title": "Cost-effective, Energy-efficient, and Scalable Storage Computing for Large-scale AI Applications",
+                "publisher": "ACM Trans. on Storage",
+                "url": "https://doi.org/10.1145/3415580",
+                "date": "Oct. 2020"
+            },
+            {
+                "title": "A Feasible FPGA Weightless Neural Accelerator",
+                "publisher": "ISCAS - IEEE",
+                "url": "https://doi.org/10.1109/ISCAS.2019.8702797",
+                "date": "May. 2019"
+            },
+            {
+                "title": "Financial credit analysis via a clustering weightless neural classifier",
+                "publisher": "Neurocomputing",
+                "url": "http://dx.doi.org/10.1016/j.neucom.2015.06.105",
+                "date": "Jan. 2016"
+            },
+            {
+                "title": "Time-Series Classification with KernelCanvas and WISARD",
+                "publisher": "Master's Dissertation",
+                "url": "https://www.cos.ufrj.br/index.php/pt-BR/publicacoes-pesquisa/details/15/2564",
+                "date": "Dec. 2015"
+            },
+            {
+                "title": "Real-Time Music Tracking Based on a Weightless Neural Network",
+                "publisher": "CISIS - IEEE",
+                "url": "http://dx.doi.org/10.1109/CISIS.2015.84",
+                "date": "Jul. 2015"
+            },
+            {
+                "title": "Spatio-temporal Pattern Classification with KernelCanvas and WiSARD",
+                "publisher": "BRACIS - IEEE",
+                "url": "http://dx.doi.org/10.1109/BRACIS.2014.49",
+                "date": "Oct. 2014"
+            },
+            {
+                "title": "Credit analysis with a clustering RAM-based neural classifier",
+                "publisher": "ESANN",
+                "url": "https://www.elen.ucl.ac.be/Proceedings/esann/esannpdf/es2014-107.pdf",
+                "date": "Apr. 2014"
+            },
+            {
+                "title": "Rock-Paper-Scissors WiSARD",
+                "publisher": "BRICS-CCI \\& CBIC-IEEE",
+                "url": "http://dx.doi.org/10.1109/BRICS-CCI-CBIC.2013.38",
+                "date": "Sep. 2013"
+            }
+        ]
+    },
+
+    "personal_projects": {
+        "title": "Personal Projects",
+        "items": [
+            {
+                "title": "Mell",
+                "description": "Program to generate code, documents, and projects from metadata and template files.",
+                "url": "https://github.com/diegofps/mell",
+                "publisher": "Github",
+                "languages": "Python, Shell"
+            },
+            {
+                "title": "Patas",
+                "description": "Scheduler to do hyperparameter searches using a single command.",
+                "url": "https://github.com/diegofps/patas",
+                "publisher": "Github",
+                "languages": "Python, Shell"
+            },
+            {
+                "title": "Wup",
+                "description": "Library with weightless neural network implementations.",
+                "url": "https://github.com/diegofps/wup",
+                "publisher": "Github",
+                "languages": "C++"
+            },
+            {
+                "title": "DevStream",
+                "description": "Gateway to intercept and transform events from a Linux system.",
+                "url": "https://github.com/diegofps/devstream",
+                "publisher": "Github",
+                "languages": "Python, C++"
+            },
+            {
+                "title": "BandejãoUFRJ",
+                "description": "Android app to consult the university cafeteria menu - 4000 users.",
+                "url": "https://play.google.com/store/apps/details?id=com.github.diegofps.bandejaoufrj",
+                "publisher": "Google Play",
+                "languages": "Java"
+            },
+            {
+                "title": "Priority Shield",
+                "description": "Android app to hide, organize, and save Android notifications.",
+                "url": "https://play.google.com/store/apps/details?id=br.com.wespa.priorityshield",
+                "publisher": "Google Play",
+                "languages": "Java"
+            },
+            {
+                "title": "Kalkulilo",
+                "description": "Android calculator with a gesture keyboard",
+                "url": "https://play.google.com/store/apps/details?id=com.github.diegofps.android.smath.basic",
+                "publisher": "Google Play",
+                "languages": "Java, C++"
+            }
+        ]
+    },
+
+    "references": {
+        "title": "References",
+        "text": "References will be provided upon request."
+    }
+
+}

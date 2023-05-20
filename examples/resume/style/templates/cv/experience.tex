@@ -1,0 +1,55 @@
+%-------------------------------------------------------------------------------
+%	SECTION TITLE
+%-------------------------------------------------------------------------------
+% \tr{\cvsection{Experience}}{\cvsection{Experiência}}
+\cvsection{|= meta.experience.title =|}
+
+
+%-------------------------------------------------------------------------------
+%	CONTENT
+%-------------------------------------------------------------------------------
+\begin{cventries}
+
+|? for item in meta.experience.items ?|
+
+%---------------------------------------------------------
+\cventry
+  {|= item.role =|} % Job title
+  {\link{|= item.url =|}{|= item.company =|}} % Organization
+  {|= item.location =|} % Location
+  {|= item.date =|} % Date(s)
+  {%
+|= item.description | join('\n') =|
+|? if item.impact ?|
+    \vspace{4mm}
+    \color{lightgray}
+    \begin{cvitems} % Description(s) of tasks/responsibilities
+      \item{
+|= item.impact | join('\n') =|
+      }
+    \end{cvitems}
+|? endif ?|
+|? if item.projects ?|
+    \vspace{2mm}
+    \begin{cvprojects}
+|? for project in item.projects ?|
+      %---------------------------------------------------------
+      \cvproject
+        {|= project.url =|}
+        {|= project.company =|}
+        {|= project.role =|}
+        {|= project.location =|}
+        {|= project.date =|}
+        {%
+|= project.description | join('\n') =|
+        }
+        {%
+|= project.impact | join('\n') =|
+        }
+|? endfor ?|
+    \end{cvprojects}
+|? endif?|
+  }
+
+|? endfor ?|
+\end{cventries}
